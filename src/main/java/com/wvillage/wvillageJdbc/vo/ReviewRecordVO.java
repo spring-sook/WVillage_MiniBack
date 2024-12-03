@@ -9,4 +9,7 @@ import lombok.*;
 @RequiredArgsConstructor
 @ToString
 public class ReviewRecordVO {
+    private String recordEmail; //
+    private String recordReview;
+    private int recordCount;
 }
