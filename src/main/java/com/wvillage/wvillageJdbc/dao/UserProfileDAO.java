@@ -19,10 +19,10 @@ public class UserProfileDAO {
     @Autowired
     private final JdbcTemplate jdbcTemplate;
 
-    public UserProfileVO getUserProfile(String id) {
+    public UserProfileVO getUserProfile(String email) {
         String sql = "SELECT EMAIL, NICKNAME, PROFILE_IMG, SCORE, REPORT_COUNT from MEMBER WHERE id = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new Object[]{id}, new userInfoRowMapper());
+            return jdbcTemplate.queryForObject(sql, new Object[]{email}, new userInfoRowMapper());
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
