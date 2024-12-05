@@ -8,7 +8,6 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor // 모든 매개변수가 있는 생성자
 @NoArgsConstructor // 기본 생성자
-@RequiredArgsConstructor // 특정 변수들만 있는 생성자
 @ToString
 public class PostVO {
     private String postId;

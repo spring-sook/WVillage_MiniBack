@@ -8,4 +8,5 @@ import lombok.*;
 @NoArgsConstructor // 기본 생성자
 @ToString
 public class LoginVO {
+    private String email;
 }
