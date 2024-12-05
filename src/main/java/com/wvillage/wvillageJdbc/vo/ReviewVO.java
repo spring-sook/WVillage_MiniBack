@@ -14,4 +14,6 @@ public class ReviewVO {
     private String reviewTags;
 
     private int reviewCount;
+
+
 }
