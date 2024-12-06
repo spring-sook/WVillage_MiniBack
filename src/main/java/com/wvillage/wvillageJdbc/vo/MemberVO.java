@@ -19,11 +19,13 @@ public class MemberVO {
     private String profileImg;
     private int exist;
     private String areaCode;
-    private String tier;
+    private String grade;
     private int point;
     private String signupDate;
     private String signoutDate;
     private int reportCount;
+
+
     public MemberVO(String email, String nickname, String profileImg, int score, int reportCount) {
         this.email = email;
         this.nickname = nickname;

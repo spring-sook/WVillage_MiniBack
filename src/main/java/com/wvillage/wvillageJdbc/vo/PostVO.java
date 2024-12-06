@@ -3,6 +3,7 @@ package com.wvillage.wvillageJdbc.vo;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,12 +17,12 @@ public class PostVO {
     private Date postDate;
     private String postTitle;
     private String postContent;
-    // private String postImg;
+    private List<String> postImg;
     private int postViews;
     private int postDailyAmount;
     private int postHourlyAmount;
     private int postRegion;
     private int postDeal;
     private boolean postEnable;
-
+    private String postLocation;  //상세위치
 }

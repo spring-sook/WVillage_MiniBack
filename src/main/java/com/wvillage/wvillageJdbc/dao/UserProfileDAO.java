@@ -2,7 +2,6 @@ package com.wvillage.wvillageJdbc.dao;
 
 
 import com.wvillage.wvillageJdbc.vo.MemberVO;
-import com.wvillage.wvillageJdbc.vo.UserProfileVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

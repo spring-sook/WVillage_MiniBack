@@ -1,6 +1,6 @@
 package com.wvillage.wvillageJdbc.controller;
 
-import com.wvillage.wvillageJdbc.dao.ReviewRecordDAO;
+import com.wvillage.wvillageJdbc.dao.ReviewDAO;
 import com.wvillage.wvillageJdbc.dao.UserProfileDAO;
 import com.wvillage.wvillageJdbc.vo.ReviewVO;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +17,11 @@ import java.util.List;
 @RequestMapping("/userProfile")
 public class UserProfileController {
     private final UserProfileDAO userProfileDAO;
-    private final ReviewRecordDAO reviewRecordDAO;
+    private final ReviewDAO reviewDAO;
 
     @GetMapping("/reviews/{email}")
     public ResponseEntity<List<ReviewVO>> getReviewRecord(@PathVariable String email) {
-        List<ReviewVO> reviewVOList = reviewRecordDAO.getReviewRecord(email);
+        List<ReviewVO> reviewVOList = reviewDAO.getReviewRecord(email);
         return ResponseEntity.ok(reviewVOList);
     }
 
