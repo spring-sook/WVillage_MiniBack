@@ -2,6 +2,8 @@ package com.wvillage.wvillageJdbc.vo;
 
 import lombok.*;
 
+import java.lang.reflect.Member;
+
 @Getter
 @Setter
 @AllArgsConstructor // 모든 매개변수가 있는 생성자
@@ -22,4 +24,11 @@ public class MemberVO {
     private String signupDate;
     private String signoutDate;
     private int reportCount;
+    public MemberVO(String email, String nickname, String profileImg, int score, int reportCount) {
+        this.email = email;
+        this.nickname = nickname;
+        this.profileImg = profileImg;
+        this.score = score;
+        this.reportCount = reportCount;
+    }
 }

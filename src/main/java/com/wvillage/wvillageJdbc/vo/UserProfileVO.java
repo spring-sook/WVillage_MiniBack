@@ -8,9 +8,5 @@ import lombok.*;
 @NoArgsConstructor // 기본 생성자
 @ToString
 public class UserProfileVO {
-    private String email;
-    private String nickName;
-    private String profileImg;
-    private int score;
-    private int reportCount;
+
 }

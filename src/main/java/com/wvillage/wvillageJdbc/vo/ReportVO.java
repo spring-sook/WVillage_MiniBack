@@ -7,8 +7,13 @@ import lombok.*;
 @AllArgsConstructor // 모든 매개변수가 있는 생성자
 @NoArgsConstructor // 기본 생성자
 @ToString
-public class ReviewRecordVO {
-    private String recordEmail; //
-    private String recordReview;
-    private int recordCount;
+public class ReportVO {
+    private String reviewId;
+    private String reviewEmail;
+    private String reviewReserve;
+    private String reviewTags;
+
+    private int reviewCount;
+
+
 }

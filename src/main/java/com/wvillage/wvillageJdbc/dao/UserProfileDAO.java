@@ -1,6 +1,7 @@
 package com.wvillage.wvillageJdbc.dao;
 
 
+import com.wvillage.wvillageJdbc.vo.MemberVO;
 import com.wvillage.wvillageJdbc.vo.UserProfileVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class UserProfileDAO {
     @Autowired
     private final JdbcTemplate jdbcTemplate;
 
-    public UserProfileVO getUserProfile(String email) {
+    public MemberVO getUserProfile(String email) {
         String sql = "SELECT EMAIL, NICKNAME, PROFILE_IMG, SCORE, REPORT_COUNT from MEMBER WHERE id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new Object[]{email}, new userInfoRowMapper());
@@ -29,10 +30,10 @@ public class UserProfileDAO {
         }
     }
 
-    private static class userInfoRowMapper implements RowMapper<UserProfileVO> {
+    private static class userInfoRowMapper implements RowMapper<MemberVO> {
         @Override
-        public UserProfileVO mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new UserProfileVO(
+        public MemberVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new MemberVO(
                     rs.getString("EMAIL"),
                     rs.getString("NICKNAME"),
                     rs.getString("PROFILE_IMG"),

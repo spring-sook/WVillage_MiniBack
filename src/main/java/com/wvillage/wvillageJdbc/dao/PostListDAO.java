@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Slf4j
 @RequiredArgsConstructor
-public class LoginDAO {
+public class PostListDAO {
     @Autowired
     private final JdbcTemplate jdbcTemplate;
 }

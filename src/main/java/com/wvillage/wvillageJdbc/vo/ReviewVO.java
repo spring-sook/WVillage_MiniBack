@@ -8,12 +8,7 @@ import lombok.*;
 @NoArgsConstructor // 기본 생성자
 @ToString
 public class ReviewVO {
-    private String reviewId;
-    private String reviewEmail;
-    private String reviewReserve;
-    private String reviewTags;
-
-    private int reviewCount;
-
-
+    private String recordEmail; //
+    private String recordReview;
+    private int recordCount;
 }

@@ -1,6 +1,6 @@
 package com.wvillage.wvillageJdbc.dao;
 
-import com.wvillage.wvillageJdbc.vo.ReviewRecordVO;
+import com.wvillage.wvillageJdbc.vo.ReviewVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class ReviewRecordDAO {
 
 
     // 해당 사용자의 이메일을 인자로 받아 VO의 리스트를 반환
-    public List<ReviewRecordVO> getReviewRecord(String email) {
+    public List<ReviewVO> getReviewRecord(String email) {
         try {
             return jdbcTemplate.query(LOAD_REVIEW_RECORD_SQL, new Object[]{email}, new ReviewRecordMapper());
         } catch (Exception e) {
@@ -37,10 +37,10 @@ public class ReviewRecordDAO {
         }
     }
 
-    private static class ReviewRecordMapper implements RowMapper<ReviewRecordVO> {
+    private static class ReviewRecordMapper implements RowMapper<ReviewVO> {
         @Override
-        public ReviewRecordVO mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new ReviewRecordVO(
+        public ReviewVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new ReviewVO(
                     rs.getString("REC_EMAIL"),
                     rs.getString("TAG_CONTENT"),
                     rs.getInt("REC_COUNT")

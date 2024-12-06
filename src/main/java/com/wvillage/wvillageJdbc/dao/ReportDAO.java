@@ -1,4 +1,4 @@
 package com.wvillage.wvillageJdbc.dao;
 
-public class PostDAO {
+public class ReportDAO {
 }

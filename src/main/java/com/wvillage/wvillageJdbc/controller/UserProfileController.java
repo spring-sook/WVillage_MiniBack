@@ -2,10 +2,9 @@ package com.wvillage.wvillageJdbc.controller;
 
 import com.wvillage.wvillageJdbc.dao.ReviewRecordDAO;
 import com.wvillage.wvillageJdbc.dao.UserProfileDAO;
-import com.wvillage.wvillageJdbc.vo.ReviewRecordVO;
+import com.wvillage.wvillageJdbc.vo.ReviewVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +20,9 @@ public class UserProfileController {
     private final ReviewRecordDAO reviewRecordDAO;
 
     @GetMapping("/reviews/{email}")
-    public ResponseEntity<List<ReviewRecordVO>> getReviewRecord(@PathVariable String email) {
-        List<ReviewRecordVO> reviewRecordVOList = reviewRecordDAO.getReviewRecord(email);
-        return ResponseEntity.ok(reviewRecordVOList);
+    public ResponseEntity<List<ReviewVO>> getReviewRecord(@PathVariable String email) {
+        List<ReviewVO> reviewVOList = reviewRecordDAO.getReviewRecord(email);
+        return ResponseEntity.ok(reviewVOList);
     }
 
 
