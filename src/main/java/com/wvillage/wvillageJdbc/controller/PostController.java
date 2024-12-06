@@ -1,4 +1,4 @@
 package com.wvillage.wvillageJdbc.controller;
 
-public class PostDAO {
+public class PostController {
 }
