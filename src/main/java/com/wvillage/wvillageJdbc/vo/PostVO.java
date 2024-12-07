@@ -43,4 +43,14 @@ public class PostVO {
         this.postRegion = postRegion;
         this.postThumbnail = postThumbnail;
     }
+
+    public PostVO(String postEmail, String postCat, String postTitle, String postContent, int postPrice, String postRegion, String postLocation) {
+        this.postEmail = postEmail;
+        this.postCat = postCat;
+        this.postTitle = postTitle;
+        this.postContent = postContent;
+        this.postPrice = postPrice;
+        this.postRegion = postRegion;
+        this.postLocation = postLocation;
+    }
 }
