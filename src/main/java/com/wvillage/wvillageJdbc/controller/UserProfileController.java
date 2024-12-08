@@ -22,7 +22,8 @@ public class UserProfileController {
 
     @GetMapping("/profile/{email}")
     public ResponseEntity<MemberVO> getUserProfile(@PathVariable String email) {
-        return null;
+        MemberVO memberVO = userProfileDAO.getUserProfile(email);
+        return ResponseEntity.ok(memberVO);
     }
 
     @GetMapping("/reviews/{email}")

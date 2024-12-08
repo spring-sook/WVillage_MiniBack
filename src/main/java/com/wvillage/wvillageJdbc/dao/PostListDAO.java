@@ -19,24 +19,85 @@ public class PostListDAO {
     @Autowired
     private final JdbcTemplate jdbcTemplate;
 
+
+
+    // 특정 유저가 게시한 게시글 목록 불러오기
+    public List<PostVO> getUserProfilePostList(String email){
+        String sql = """
+                SELECT P.POST_ID,
+                       P.POST_TITLE,
+                       P.POST_PRICE,
+                       P.POST_REGION,
+                       I.IMG_URL
+                FROM (SELECT IMG_POST, IMG_URL
+                      FROM POST_IMG
+                      WHERE IMG_ID IN (SELECT MIN(IMG_ID)
+                                       FROM POST_IMG
+                                       GROUP BY IMG_POST)) I
+                         JOIN (SELECT POST_ID,
+                                      POST_TITLE,
+                                      POST_PRICE,
+                                      POST_REGION
+                               FROM POST
+                               WHERE POST_EMAIL = ?) P
+                              ON P.POST_ID = I.IMG_POST""";
+        try{
+            return jdbcTemplate.query(sql, new Object[]{email}, new CommonRowMapper());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+
+    // 지역+카테고리 기준 목록 불러오기
+    public List<PostVO> getCommonCategoryPostList(String region, String category) {
+        String sql = """
+                SELECT P.POST_ID,
+                       P.POST_TITLE,
+                       P.POST_PRICE,
+                       P.POST_REGION,
+                       I.IMG_URL
+                FROM (SELECT IMG_POST, IMG_URL
+                      FROM POST_IMG
+                      WHERE IMG_ID IN (SELECT MIN(IMG_ID)
+                                       FROM POST_IMG
+                                       GROUP BY IMG_POST)) I
+                         JOIN (SELECT POST_ID,
+                                      POST_TITLE,
+                                      POST_PRICE,
+                                      POST_REGION
+                               FROM POST
+                               WHERE POST_REGION = ? AND POST_CATEGORY = ? AND POST_DISABLED = 0) P
+                              ON P.POST_ID = I.IMG_POST""";
+        try{
+            return jdbcTemplate.query(sql, new Object[]{region, category}, new CommonRowMapper());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+    }
+
+    // 지역 기준 카테고리 없이 목록 불러오기
     public List<PostVO> getCommonAllPostList(String region) {
-        String sql = "SELECT P.POST_ID,\n" +
-                "       P.POST_TITLE,\n" +
-                "       P.POST_PRICE,\n" +
-                "       P.POST_REGION,\n" +
-                "       I.IMG_URL\n" +
-                "FROM (SELECT IMG_POST, IMG_URL\n" +
-                "      FROM POST_IMG\n" +
-                "      WHERE IMG_ID IN (SELECT MIN(IMG_ID)\n" +
-                "                       FROM POST_IMG\n" +
-                "                       GROUP BY IMG_POST)) I\n" +
-                "         JOIN (SELECT POST_ID,\n" +
-                "                      POST_TITLE,\n" +
-                "                      POST_PRICE,\n" +
-                "                      POST_REGION\n" +
-                "               FROM POST\n" +
-                "               WHERE POST_REGION = ? AND POST_DISABLED = 0) P\n" +
-                "              ON P.POST_ID = I.IMG_POST";
+        String sql = """
+                SELECT P.POST_ID,
+                       P.POST_TITLE,
+                       P.POST_PRICE,
+                       P.POST_REGION,
+                       I.IMG_URL
+                FROM (SELECT IMG_POST, IMG_URL
+                      FROM POST_IMG
+                      WHERE IMG_ID IN (SELECT MIN(IMG_ID)
+                                       FROM POST_IMG
+                                       GROUP BY IMG_POST)) I
+                         JOIN (SELECT POST_ID,
+                                      POST_TITLE,
+                                      POST_PRICE,
+                                      POST_REGION
+                               FROM POST
+                               WHERE POST_REGION = ? AND POST_DISABLED = 0) P
+                              ON P.POST_ID = I.IMG_POST""";
         try {
             return jdbcTemplate.query(sql, new Object[]{region}, new CommonRowMapper());
         } catch (Exception e) {
