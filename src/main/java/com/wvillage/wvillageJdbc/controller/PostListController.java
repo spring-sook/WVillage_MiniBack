@@ -15,11 +15,21 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/board")
 public class PostListController {
-    private PostListDAO postListDAO;
+    private final PostListDAO postListDAO;
 
     @GetMapping("/commonAllList/{region}")
     public ResponseEntity<List<PostVO>> commonAllList(@PathVariable String region) {
         List<PostVO> lst = postListDAO.getCommonAllPostList(region);
         return ResponseEntity.ok(lst);
     }
+
+    @GetMapping("/commonCategoryList")
+    public ResponseEntity<List<PostVO>> commonCategoryList(@RequestParam String region,
+                                                           @RequestParam String category) {
+        List<PostVO> lst = postListDAO.getCommonCategoryPostList(region, category);
+        return ResponseEntity.ok(lst);
+    }
+
+
 }
+

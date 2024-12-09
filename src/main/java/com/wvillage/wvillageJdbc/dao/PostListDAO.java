@@ -28,7 +28,8 @@ public class PostListDAO {
                        P.POST_TITLE,
                        P.POST_PRICE,
                        P.POST_REGION,
-                       I.IMG_URL
+                       I.IMG_URL,
+                       P.POST_DISABLED
                 FROM (SELECT IMG_POST, IMG_URL
                       FROM POST_IMG
                       WHERE IMG_ID IN (SELECT MIN(IMG_ID)
@@ -37,7 +38,8 @@ public class PostListDAO {
                          JOIN (SELECT POST_ID,
                                       POST_TITLE,
                                       POST_PRICE,
-                                      POST_REGION
+                                      POST_REGION,
+                                      POST_DISABLED
                                FROM POST
                                WHERE POST_EMAIL = ?) P
                               ON P.POST_ID = I.IMG_POST""";
