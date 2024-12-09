@@ -28,4 +28,17 @@ public class ReviewController {
         List<ReviewVO> reviewVOList = reviewDAO.getReviewRecord(email);
         return ResponseEntity.ok(reviewVOList);
     }
+
+    @PostMapping("/write")
+    public ResponseEntity<String> insertReview(@RequestParam String email,
+                                               @RequestParam String reserve,
+                                               @RequestParam String tags) {
+        boolean result = reviewDAO.insertReview(email, reserve, tags);
+
+        if (result) {
+            return ResponseEntity.ok("Review inserted successfully.");
+        } else {
+            return ResponseEntity.ok("Failed to insert review.");
+        }
+    }
 }

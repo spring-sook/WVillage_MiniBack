@@ -35,7 +35,7 @@ public class PostListDAO {
                       WHERE IMG_ID IN (SELECT MIN(IMG_ID)
                                        FROM POST_IMG
                                        GROUP BY IMG_POST)) I
-                         JOIN (SELECT POST_ID,
+                          RIGHT JOIN (SELECT POST_ID,
                                       POST_TITLE,
                                       POST_PRICE,
                                       POST_REGION,

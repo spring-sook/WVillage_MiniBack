@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,10 +21,41 @@ public class ReviewDAO {
     @Autowired
     private final JdbcTemplate jdbcTemplate;
 
-    private final String LOAD_REVIEW_RECORD_SQL =
-            "SELECT RR.REC_EMAIL, RT.TAG_CONTENT, RR.REC_COUNT " +
-                    "FROM (SELECT * FROM REVIEW_RECORD WHERE REC_EMAIL = ?) RR " +
-                    "JOIN REVIEW_TAG RT ON RR.REC_REVIEW = RT.TAG_ID";
+    // 리뷰 작성하기
+    @Transactional
+    public boolean insertReview(String email, String reserve, String tags) {
+        String reserveSql = "INSERT INTO REVIEW (REVIEW_EMAIL, REVIEW_RESERVE, REVIEW_TAG) VALUES (?, ?, ?)";
+        String recordSql = "UPDATE REVIEW_RECORD SET REC_COUNT = REC_COUNT + 1 WHERE REC_EMAIL = ? AND REC_REVIEW = ?";
+        String scoreSql = "SELECT SUM(TAG_SCORE) FROM REVIEW_TAG WHERE TAG_ID IN (%s)";
+        String updateScoreSql = "UPDATE MEMBER SET SCORE = SCORE + ? WHERE EMAIL = ?";
+
+        String[] tagList = tags.split(",");
+
+        // 태그 ID를 문자열로 변환
+        String tagIds = String.join(",", Arrays.stream(tagList)
+                .map(String::trim)
+                .map(tag -> "'" + tag + "'") // 각 태그를 문자열로 감쌈
+                .toArray(String[]::new));
+
+        try {
+            jdbcTemplate.update(reserveSql, email, reserve, tags);
+
+            for (String tag : tagList) {
+                jdbcTemplate.update(recordSql, email, tag.trim()); // 공백 제거 후 태그 사용
+            }
+
+            log.warn("{} : {}", scoreSql, tagIds);
+            int point = jdbcTemplate.queryForObject(String.format(scoreSql, tagIds), Integer.class);
+            log.warn("포인트합계:{}", point);
+
+            jdbcTemplate.update(updateScoreSql, point, email);
+            return true;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw e;
+        }
+    }
+
 
     // 게시글에 달린 리뷰 목록 반환
     public List<ReviewVO> getPostReviewList(String postId) {
@@ -105,8 +137,12 @@ public class ReviewDAO {
 
     // 해당 사용자의 이메일을 인자로 받아 VO의 리스트를 반환
     public List<ReviewVO> getReviewRecord(String email) {
+        String sql = "SELECT RR.REC_EMAIL, RT.TAG_CONTENT, RR.REC_COUNT " +
+                "FROM (SELECT * FROM REVIEW_RECORD WHERE REC_EMAIL = ?) RR " +
+                "JOIN REVIEW_TAG RT ON RR.REC_REVIEW = RT.TAG_ID";
+
         try {
-            return jdbcTemplate.query(LOAD_REVIEW_RECORD_SQL, new Object[]{email}, new ReviewRecordMapper());
+            return jdbcTemplate.query(sql, new Object[]{email}, new ReviewRecordMapper());
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
