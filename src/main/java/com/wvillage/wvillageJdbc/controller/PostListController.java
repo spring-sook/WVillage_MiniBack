@@ -17,16 +17,25 @@ import java.util.List;
 public class PostListController {
     private final PostListDAO postListDAO;
 
+    // 일반 전체
     @GetMapping("/commonAllList/{region}")
     public ResponseEntity<List<PostVO>> commonAllList(@PathVariable String region) {
         List<PostVO> lst = postListDAO.getCommonAllPostList(region);
         return ResponseEntity.ok(lst);
     }
 
+    // 일반 카테고리별
     @GetMapping("/commonCategoryList")
     public ResponseEntity<List<PostVO>> commonCategoryList(@RequestParam String region,
                                                            @RequestParam String category) {
         List<PostVO> lst = postListDAO.getCommonCategoryPostList(region, category);
+        return ResponseEntity.ok(lst);
+    }
+
+    // 특정 사용자 게시물 목록
+    @GetMapping("/userProfile/{email}")
+    public ResponseEntity<List<PostVO>> userProfileList(@PathVariable String email) {
+        List<PostVO> lst = postListDAO.getUserProfilePostList(email);
         return ResponseEntity.ok(lst);
     }
 

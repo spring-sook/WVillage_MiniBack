@@ -18,8 +18,8 @@ import java.util.List;
 @RequestMapping("/userProfile")
 public class UserProfileController {
     private final UserProfileDAO userProfileDAO;
-    private final ReviewDAO reviewDAO;
 
+    // 유저 프로필 정보
     @GetMapping("/profile/{email}")
     public ResponseEntity<MemberVO> getUserProfile(@PathVariable String email) {
         MemberVO memberVO = userProfileDAO.getUserProfile(email);
