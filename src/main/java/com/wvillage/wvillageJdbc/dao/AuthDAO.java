@@ -19,10 +19,8 @@ import java.sql.SQLException;
 public class AuthDAO {
     @Autowired
     private final JdbcTemplate jdbcTemplate;
-    private static final String LOGIN = "SELECT EMAIL, NAME, NICKNAME, SCORE, PROFILE_IMG, AREA_CODE, GRADE, POINT, " +
-                                            "REGION_SIDO, REGION_SIGUN, REGION_GU, REGION_EMD, REGION_RI " +
-                                        "FROM MEMBER m JOIN REGION r ON m.AREA_CODE = r.REGION_CODE " +
-                                        "WHERE EMAIL = ? AND PASSWORD = ? ";
+    private static final String LOGIN = "SELECT EMAIL, NAME, NICKNAME, SCORE, PROFILE_IMG, AREA_CODE, GRADE, POINT " +
+                                        "FROM MEMBER WHERE EMAIL = ? AND PASSWORD = ? ";
 
     public MemberVO login(String email, String password) {
         try {
