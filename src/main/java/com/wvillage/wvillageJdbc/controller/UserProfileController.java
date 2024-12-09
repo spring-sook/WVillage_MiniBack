@@ -26,11 +26,6 @@ public class UserProfileController {
         return ResponseEntity.ok(memberVO);
     }
 
-    @GetMapping("/reviews/{email}")
-    public ResponseEntity<List<ReviewVO>> getReviewRecord(@PathVariable String email) {
-        List<ReviewVO> reviewVOList = reviewDAO.getReviewRecord(email);
-        return ResponseEntity.ok(reviewVOList);
-    }
 
     @GetMapping("/addr/{email}")
     public ResponseEntity<MemberVO> getAddr(@PathVariable String email) {
