@@ -11,13 +11,13 @@ import org.springframework.stereotype.Repository;
 @Slf4j
 @RequiredArgsConstructor
 public class PostDAO {
-    private static final JdbcTemplate jdbcTemplate = null;
+    private final JdbcTemplate jdbcTemplate;
     private static final String INSERT_POST_WRITE = "INSERT INTO POST (POST_EMAIL, POST_CATEGORY, " +
                                                         "POST_TITLE, POST_CONTENT, POST_PRICE, " +
                                                         "POST_REGION, POST_LOCATION) " +
                                                     "VALUES (?, ?, ?, ?, ?, ?, ?) ";
 
-    public static boolean postWrite(PostVO postVo) {
+    public boolean postWrite(PostVO postVo) {
         try {
             int result = jdbcTemplate.update(INSERT_POST_WRITE, postVo.getPostEmail(), postVo.getPostCat(),
                     postVo.getPostTitle(), postVo.getPostContent(), postVo.getPostPrice(),
@@ -28,4 +28,6 @@ public class PostDAO {
             return false;
         }
     }
+
+
 }

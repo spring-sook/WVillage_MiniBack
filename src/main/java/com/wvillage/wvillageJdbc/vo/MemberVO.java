@@ -33,4 +33,9 @@ public class MemberVO {
         this.score = score;
         this.reportCount = reportCount;
     }
+
+    public MemberVO(String email, String areaCode) {
+        this.email = email;
+        this.areaCode = areaCode;
+    }
 }

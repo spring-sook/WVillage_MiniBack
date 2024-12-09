@@ -32,5 +32,9 @@ public class UserProfileController {
         return ResponseEntity.ok(reviewVOList);
     }
 
-
+    @GetMapping("/addr/{email}")
+    public ResponseEntity<MemberVO> getAddr(@PathVariable String email) {
+        MemberVO memberVo = userProfileDAO.getAddr(email);
+        return ResponseEntity.ok(memberVo);
+    }
 }

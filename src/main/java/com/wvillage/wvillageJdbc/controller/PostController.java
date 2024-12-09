@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/post")
 @RequiredArgsConstructor
 public class PostController {
+    private final PostDAO postDao;
     @PostMapping("/postWrite")
     public ResponseEntity<Boolean> postWrite(@RequestBody PostVO postVo) {
-        boolean isSuccess = PostDAO.postWrite(postVo);
+        boolean isSuccess = postDao.postWrite(postVo);
         return ResponseEntity.ok(isSuccess);
     }
 }
