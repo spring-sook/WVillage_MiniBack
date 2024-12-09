@@ -34,6 +34,17 @@ public class MemberVO {
         this.reportCount = reportCount;
     }
 
+    public MemberVO(String email, String name, String nickname, int score, String profileImg, String areaCode, String grade, int point) {
+        this.email = email;
+        this.name = name;
+        this.nickname = nickname;
+        this.score = score;
+        this.profileImg = profileImg;
+        this.areaCode = areaCode;
+        this.grade = grade;
+        this.point = point;
+    }
+
     public MemberVO(String email, String areaCode) {
         this.email = email;
         this.areaCode = areaCode;

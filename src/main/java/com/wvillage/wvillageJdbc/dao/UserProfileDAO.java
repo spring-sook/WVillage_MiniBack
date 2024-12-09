@@ -35,7 +35,7 @@ public class UserProfileDAO {
         try {
             return jdbcTemplate.queryForObject(GET_ADDR, new Object[]{email}, new addrRowMapper());
         } catch (DataAccessException e) {
-            log.error("회원 이메일, 주소 조회 중 에러 발생");
+            log.error("회원 이메일, 주소 조회 중 에러 발생", e);
             throw e;
         }
     }
