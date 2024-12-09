@@ -18,6 +18,8 @@ public class AccountDAO {
     private static final String FIND_ACCOUNT ="SELECT ACC_NUM, ACC_BACK FROM ACCOUNT WHERE ACC_EMAIL = ?";
     private static final String INSERT_ACCOUNT ="INSERT INTO ACCOUNT (ACC_NUM, ACC_BACK, ACC_EMAIL) VALUES (?, ?, ?)";
     private static final String DELETE_ACCOUNT ="DELETE FROM ACCOUNT WHERE ACC_NUM = ? AND ACC_BACK = ?";
+    private static final String SELECT_POINTS = "SELECT POINT FROM MEMBER WHERE EMAIL = ?";
+    private static final String UPDATE_POINTS = "UPDATE MEMBER SET POINT = ? WHERE EMAIL = ?";
 
     //계좌 조회
     public List<AccountVO> findAccountsByEmail(String ACC_EMAIL) {
@@ -70,6 +72,44 @@ public class AccountDAO {
             return result > 0;
         } catch (DataAccessException e) {
             log.error("계좌 삭제 중 오류 발생: accountNo={}, accountBank={}", accountNo, accountBank, e);
+            return false;
+        }
+    }
+    // 포인트 조회
+    public int getPointsByEmail(String email) {
+        try {
+            return jdbcTemplate.queryForObject(SELECT_POINTS, new Object[]{email}, Integer.class);
+        } catch (DataAccessException e) {
+            log.error("포인트 조회 중 오류 발생: {}", email, e);
+            return 0; // 포인트 조회 실패 시 0 반환
+        }
+    }
+
+    // 포인트 충전
+    public boolean chargePoints(String email, int amount) {
+        try {
+            int currentPoints = getPointsByEmail(email);
+            int newPoints = currentPoints + amount;
+            int result = jdbcTemplate.update(UPDATE_POINTS, newPoints, email);
+            return result > 0;
+        } catch (DataAccessException e) {
+            log.error("포인트 충전 중 오류 발생: {}", email, e);
+            return false;
+        }
+    }
+
+    // 포인트 환급
+    public boolean refundPoints(String email, int amount) {
+        try {
+            int currentPoints = getPointsByEmail(email);
+            if (currentPoints >= amount) {
+                int newPoints = currentPoints - amount;
+                int result = jdbcTemplate.update(UPDATE_POINTS, newPoints, email);
+                return result > 0;
+            }
+            return false; // 포인트가 부족할 경우 환급 실패
+        } catch (DataAccessException e) {
+            log.error("포인트 환급 중 오류 발생: {}", email, e);
             return false;
         }
     }

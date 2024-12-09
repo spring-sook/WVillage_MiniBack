@@ -3,6 +3,7 @@ package com.wvillage.wvillageJdbc.controller;
 
 import com.wvillage.wvillageJdbc.dao.AccountDAO;
 import com.wvillage.wvillageJdbc.vo.AccountVO;
+import com.wvillage.wvillageJdbc.vo.MemberVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping("/account")
 public class AccountController {
     private final AccountDAO accountDao;
+
 
 //    계좌 조회
     @GetMapping("/findByEmail")
@@ -50,5 +52,26 @@ public ResponseEntity<Boolean> addAccount(@RequestBody AccountVO accountVO) {
             log.error("Failed to delete account: accountNo={}, accountBank={}", accountNo, accountBank);
         }
         return ResponseEntity.ok(isSuccess);
+    }
+    // 포인트 충전
+    @PostMapping("/chargePoints")
+    public ResponseEntity<String> chargePoints(@RequestParam String email, @RequestParam int point) {
+        boolean success = accountDao.chargePoints(email, point);
+        if (success) {
+            return ResponseEntity.ok("포인트 충전 성공");
+        } else {
+            return ResponseEntity.status(400).body("포인트 충전 실패");
+        }
+    }
+
+    // 포인트 환급
+    @PostMapping("/refundPoints")
+    public ResponseEntity<String> refundPoints(@RequestParam String email, @RequestParam int point) {
+        boolean success = accountDao.refundPoints(email, point);
+        if (success) {
+            return ResponseEntity.ok("포인트 환급 성공");
+        } else {
+            return ResponseEntity.status(400).body("포인트 환급 실패");
+        }
     }
 }
