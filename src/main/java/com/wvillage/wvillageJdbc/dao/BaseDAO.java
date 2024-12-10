@@ -1,9 +1,11 @@
 package com.wvillage.wvillageJdbc.dao;
 
+import com.wvillage.wvillageJdbc.vo.RegionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -54,4 +56,30 @@ public class BaseDAO {
             return null;
         }
     }
+
+//    public List<String> searchRegion(String regionCode) {
+//        String sidoSql = "SELECT REGION_CODE, REGION_SIDO FROM REGION WHERE REGION_CODE LIKE '?%'";
+//        String sigunSql = "SELECT REGION_CODE, REGION_SIGUN FROM REGION WHERE REGION_CODE LIKE '?%'";
+//        String guSql = "SELECT REGION_CODE, REGION_GU FROM REGION WHERE REGION_CODE LIKE '?%'";
+//        String emdSql = "SELECT REGION_CODE, REGION_EMD FROM REGION WHERE REGION_CODE LIKE '?%'";
+//        String riSql = "SELECT REGION_CODE, REGION_RI FROM REGION WHERE REGION_CODE LIKE '?%'";
+//
+//        try{
+//
+//        } catch (RuntimeException e) {
+//            log.error(e.getMessage());
+//        }
+//    }
+
+//    private static String isEmpty(List<RegionVO> lst) {
+//        for(RegionVO vo : lst) {
+//            if(vo.getRegionSigun() != null) {
+//                return "sigun";
+//            } else if(vo.getRegionGu() != null) {
+//                return "gu";
+//            }else if(vo.getRegionEmd() != null) {
+//                return "emd";
+//            }
+//        }
+//    }
 }
