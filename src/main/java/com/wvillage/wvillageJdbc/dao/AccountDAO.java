@@ -15,9 +15,9 @@ import java.util.List;
 public class AccountDAO {
     private final JdbcTemplate jdbcTemplate;
 
-    private static final String FIND_ACCOUNT ="SELECT ACC_NUM, ACC_BACK FROM ACCOUNT WHERE ACC_EMAIL = ?";
-    private static final String INSERT_ACCOUNT ="INSERT INTO ACCOUNT (ACC_NUM, ACC_BACK, ACC_EMAIL) VALUES (?, ?, ?)";
-    private static final String DELETE_ACCOUNT ="DELETE FROM ACCOUNT WHERE ACC_NUM = ? AND ACC_BACK = ?";
+    private static final String FIND_ACCOUNT ="SELECT ACC_NUM, ACC_BANK FROM ACCOUNT WHERE ACC_EMAIL = ?";
+    private static final String INSERT_ACCOUNT ="INSERT INTO ACCOUNT (ACC_NUM, ACC_BANK, ACC_EMAIL) VALUES (?, ?, ?)";
+    private static final String DELETE_ACCOUNT ="DELETE FROM ACCOUNT WHERE ACC_NUM = ? AND ACC_BANK = ?";
     private static final String SELECT_POINTS = "SELECT POINT FROM MEMBER WHERE EMAIL = ?";
     private static final String UPDATE_POINTS = "UPDATE MEMBER SET POINT = ? WHERE EMAIL = ?";
 
