@@ -11,11 +11,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/bookmark")
 @RequiredArgsConstructor
 public class BookmarkController {
-    private BookmarkDAO bookmarkDAO;
+    private final BookmarkDAO bookmarkDAO;
 
     @GetMapping("/isBookmarking")
     public boolean isBookmarking(@RequestParam String email,
                                  @RequestParam String postId) {
         return 1 == bookmarkDAO.isBookmarking(email, postId);
+    }
+
+    @PostMapping("/insertBookmark")
+    public boolean insertBookmark(@RequestParam String postId,
+                                  @RequestParam String email) {
+        return bookmarkDAO.insertBookmark(postId, email);
+    }
+
+    @PostMapping("/deleteBookmark")
+    public boolean deleteBookmark(@RequestParam String postId,
+                                  @RequestParam String email) {
+        return bookmarkDAO.deleteBookmark(postId, email);
     }
 }
