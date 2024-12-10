@@ -29,7 +29,7 @@ public class AccountDAO {
                     (rs, rowNum) -> {
                         AccountVO account = new AccountVO();
                         account.setAccountNo(rs.getString("ACC_NUM"));
-                        account.setAccountBank(rs.getString("ACC_BACK"));
+                        account.setAccountBank(rs.getString("ACC_BANK"));
                         return account;
                     });
         } catch (DataAccessException e) {
