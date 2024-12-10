@@ -17,18 +17,21 @@ import java.util.List;
 public class ReviewController {
     private final ReviewDAO reviewDAO;
 
+    // 게시글 리뷰
     @GetMapping("/post/{postId}")
     public ResponseEntity<List<ReviewVO>> inPostList(@PathVariable String postId) {
         List<ReviewVO> lst = reviewDAO.getPostReviewList(postId);
         return ResponseEntity.ok(lst);
     }
 
+    // 사용자 리뷰
     @GetMapping("/otherProfile/{email}")
     public ResponseEntity<List<ReviewVO>> getReviewRecord(@PathVariable String email) {
         List<ReviewVO> reviewVOList = reviewDAO.getReviewRecord(email);
         return ResponseEntity.ok(reviewVOList);
     }
 
+    // 리뷰 작성
     @PostMapping("/write")
     public ResponseEntity<String> insertReview(@RequestParam String email,
                                                @RequestParam String reserve,
