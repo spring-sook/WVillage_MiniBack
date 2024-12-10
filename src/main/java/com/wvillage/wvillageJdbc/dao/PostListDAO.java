@@ -59,7 +59,9 @@ public class PostListDAO extends BaseDAO {
                        P.POST_TITLE,
                        P.POST_PRICE,
                        P.POST_REGION,
-                       I.IMG_URL
+                       I.IMG_URL,
+                       P.POST_VIEW,
+                       P.POST_DATE
                 FROM (SELECT IMG_POST, IMG_URL
                       FROM POST_IMG
                       WHERE IMG_ID IN (SELECT MIN(IMG_ID)
@@ -68,7 +70,9 @@ public class PostListDAO extends BaseDAO {
                          RIGHT JOIN (SELECT POST_ID,
                                       POST_TITLE,
                                       POST_PRICE,
-                                      POST_REGION
+                                      POST_REGION,
+                                      POST_VIEW,
+                                      POST_DATE
                                FROM POST
                                WHERE POST_REGION = ? AND POST_CATEGORY = ? AND POST_DISABLED = 0) P
                               ON P.POST_ID = I.IMG_POST""";
@@ -88,7 +92,9 @@ public class PostListDAO extends BaseDAO {
                        P.POST_TITLE,
                        P.POST_PRICE,
                        P.POST_REGION,
-                       I.IMG_URL
+                       I.IMG_URL,
+                       P.POST_VIEW,
+                       P.POST_DATE
                 FROM (SELECT IMG_POST, IMG_URL
                       FROM POST_IMG
                       WHERE IMG_ID IN (SELECT MIN(IMG_ID)
@@ -97,7 +103,9 @@ public class PostListDAO extends BaseDAO {
                          RIGHT JOIN (SELECT POST_ID,
                                       POST_TITLE,
                                       POST_PRICE,
-                                      POST_REGION
+                                      POST_REGION,
+                                      POST_VIEW,
+                                      POST_DATE
                                FROM POST
                                WHERE POST_REGION = ? AND POST_DISABLED = 0) P
                               ON P.POST_ID = I.IMG_POST""";
@@ -118,7 +126,9 @@ public class PostListDAO extends BaseDAO {
                     rs.getString("POST_TITLE"),
                     rs.getInt("POST_PRICE"),
                     rs.getString("POST_REGION"),
-                    rs.getString("IMG_URL")
+                    rs.getString("IMG_URL"),
+                    rs.getInt("POST_VIEW"),
+                    rs.getDate("POST_DATE")
             );
         }
     }
