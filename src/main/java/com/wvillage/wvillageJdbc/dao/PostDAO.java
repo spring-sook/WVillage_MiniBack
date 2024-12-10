@@ -20,6 +20,7 @@ public class PostDAO {
     private static final String INSERT_POST_WRITE = "INSERT INTO POST (POST_EMAIL, POST_CATEGORY, " + "POST_TITLE, POST_CONTENT, POST_PRICE, " + "POST_REGION, POST_LOCATION) " + "VALUES (?, ?, ?, ?, ?, ?, ?) ";
     private static final String GET_LAST_POSTID = "SELECT MAX(TO_NUMBER(REGEXP_SUBSTR(POST_ID, '\\d+$'))) " + "FROM POST";
     private static final String INSERT_POST_IMG = "INSERT INTO POST_IMG (IMG_POST, IMG_URL) VALUES (?, ?) ";
+    private static final String UPDATE_POST_VIEW = "UPDATE POST SET POST_VIEW = POST_VIEW + 1 WHERE POST_ID = ? ";
 
     public String postWrite(PostVO postVo, List<String> imgUrls) {
         try {
@@ -63,6 +64,18 @@ public class PostDAO {
 //                RIGHT JOIN (SELECT * FROM POST WHERE POST_ID = ?);
 //                """;
 //    }
+
+    // 조회수 업데이트
+    public Boolean postViewUpdate(String postId) {
+        try {
+            int result = jdbcTemplate.update(UPDATE_POST_VIEW, postId);
+            return result > 0;
+        } catch (DataAccessException e) {
+            log.error("조회수 업데이트 중 예외 발생", e);
+            return false;
+        }
+    }
+
 
     private static class DeatailRowMapper implements RowMapper<PostVO> {
 

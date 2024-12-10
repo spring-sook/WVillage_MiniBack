@@ -67,6 +67,10 @@ public class PostController {
         return ResponseEntity.ok(list);
     }
 
-
+    @PostMapping("/postView/{postId}")
+    public ResponseEntity<Boolean> updatePostView(@PathVariable String postId) {
+        boolean isSuccess = postDao.postViewUpdate(postId);
+        return ResponseEntity.ok(isSuccess);
+    }
 }
 
