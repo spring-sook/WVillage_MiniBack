@@ -11,6 +11,7 @@ public class BaseDAO {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
     // 지역코드를 이름으로 바꾸기
     public String getRegionName(String regionCode) {
         String sql = "SELECT REGION_SIDO, REGION_SIGUN, REGION_GU, REGION_EMD, REGION_RI FROM REGION WHERE REGION_CODE = ?";
@@ -23,28 +24,28 @@ public class BaseDAO {
             String regionSigun = (String) row.get("REGION_SIGUN");
             String regionGu = (String) row.get("REGION_GU");
             String regionEmd = (String) row.get("REGION_EMD");
-            String regionRI = (String) row.get("REGION_RI");
+            String regionRi = (String) row.get("REGION_RI");
 
             StringBuilder regionName = new StringBuilder(regionSido);
 
             // 시/군 이 존재하는 경우 추가
-            if (regionSigun != null) {
+            if (!regionSigun.equalsIgnoreCase("nan")) {
                 regionName.append(" ").append(regionSigun);
             }
 
             // 구 추가
-            if (regionGu != null) {
+            if (!regionGu.equalsIgnoreCase("nan")) {
                 regionName.append(" ").append(regionGu);
             }
 
             // 읍면동 추가
-            if (regionEmd != null) {
+            if (!regionEmd.equalsIgnoreCase("nan")) {
                 regionName.append(" ").append(regionEmd);
             }
 
             // 리 추가
-            if (regionRI != null) {
-                regionName.append(" ").append(regionRI);
+            if (!regionRi.equalsIgnoreCase("nan")) {
+                regionName.append(" ").append(regionRi);
             }
 
             return regionName.toString().trim();
