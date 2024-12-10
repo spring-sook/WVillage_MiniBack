@@ -29,13 +29,6 @@ public class PostController {
             return ResponseEntity.status(500).body(false);
         }
     }
-
-    @GetMapping("/getRegion/{areaCode}")
-    public ResponseEntity<List<RegionVO>> getRegion(@PathVariable String areaCode) {
-        List<RegionVO> list = regionDao.getRegion(areaCode);
-        return ResponseEntity.ok(list);
-    }
-
     public static class PostRequest {
         private PostVO postVo;
         private List<String> imgUrls;
@@ -57,6 +50,23 @@ public class PostController {
             this.imgUrls = imgUrls;
         }
     }
+
+    @GetMapping("/images/{postId}")
+    public ResponseEntity<List<String>> getImages(@PathVariable String postId) {
+        List<String> lst = postDao.getImgUrls(postId);
+        return ResponseEntity.ok(lst);
+    }
+
+//    @GetMapping("/datails/{postId}")
+//    public ResponseEntity<List<PostVO>> getDatails(@PathVariable String postId) {}
+
+
+    @GetMapping("/getRegion/{areaCode}")
+    public ResponseEntity<List<RegionVO>> getRegion(@PathVariable String areaCode) {
+        List<RegionVO> list = regionDao.getRegion(areaCode);
+        return ResponseEntity.ok(list);
+    }
+
 
 }
 

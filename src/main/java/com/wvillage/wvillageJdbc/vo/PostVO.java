@@ -56,6 +56,11 @@ public class PostVO {
         this.postLocation = postLocation;
     }
 
+    // 게시글 내용
+    public PostVO(String postId, String postTitle, int postViews,int postPrice, String postContent, String postLocation, int postDeal){
+//        POST_ID, POST_VIEW, POST_PRICE, POST_CONTENT, POST_LOCATION, COUNT(*) AS POST_BK
+    }
+
     // 메인화면 슬릭
     public PostVO(String postId, String postTitle, String postRegion, String postThumbnail){
         this.postId = postId;
