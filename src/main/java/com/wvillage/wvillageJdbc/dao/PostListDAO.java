@@ -45,10 +45,25 @@ public class PostListDAO extends BaseDAO {
                                WHERE POST_EMAIL = ?) P
                               ON P.POST_ID = I.IMG_POST""";
         try {
-            return jdbcTemplate.query(sql, new Object[]{email}, new CommonRowMapper());
+            return jdbcTemplate.query(sql, new Object[]{email}, new UserPostlistRowMapper());
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
+        }
+    }
+
+    private static class UserPostlistRowMapper implements RowMapper<PostVO> {
+        @Override
+        public PostVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new PostVO(
+                    rs.getString("POST_ID"),
+                    rs.getString("POST_TITLE"),
+                    rs.getInt("POST_PRICE"),
+                    rs.getString("POST_REGION"),
+                    rs.getString("IMG_URL"),
+                    rs.getBoolean("POST_DISABLED")
+
+            );
         }
     }
 
