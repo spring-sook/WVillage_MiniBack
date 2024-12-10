@@ -53,4 +53,12 @@ public class PostVO {
         this.postRegion = postRegion;
         this.postLocation = postLocation;
     }
+
+    // 메인화면 슬릭
+    public PostVO(String postId, String postTitle, String postRegion, String postThumbnail){
+        this.postId = postId;
+        this.postTitle = postTitle;
+        this.postRegion = postRegion;
+        this.postThumbnail = postThumbnail;
+    }
 }

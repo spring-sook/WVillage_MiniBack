@@ -1,6 +1,7 @@
 package com.wvillage.wvillageJdbc.dao;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 @Slf4j
 public class BaseDAO {
 
+    @Autowired
     private JdbcTemplate jdbcTemplate;
     // 지역코드를 이름으로 바꾸기
     public String getRegionName(String regionCode) {

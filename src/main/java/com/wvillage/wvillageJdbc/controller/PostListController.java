@@ -17,6 +17,13 @@ import java.util.List;
 public class PostListController {
     private final PostListDAO postListDAO;
 
+    // 메인화면 상위 8개 게시물
+    @GetMapping("/mainTopEight")
+    public ResponseEntity<List<PostVO>> mainTopEight() {
+        List<PostVO> lst = postListDAO.getTopEightPostList();
+        return ResponseEntity.ok(lst);
+    }
+
     // 일반 전체
     @GetMapping("/commonAllList/{region}")
     public ResponseEntity<List<PostVO>> commonAllList(@PathVariable String region) {

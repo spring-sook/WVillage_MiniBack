@@ -4,6 +4,7 @@ import com.wvillage.wvillageJdbc.vo.PostVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.PriorityOrdered;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -15,14 +16,14 @@ import java.util.List;
 @Repository
 @Slf4j
 @RequiredArgsConstructor
-public class PostListDAO {
+public class PostListDAO extends BaseDAO {
     @Autowired
     private final JdbcTemplate jdbcTemplate;
 
 
 
     // 특정 유저가 게시한 게시글 목록 불러오기
-    public List<PostVO> getUserProfilePostList(String email){
+    public List<PostVO> getUserProfilePostList(String email) {
         String sql = """
                 SELECT P.POST_ID,
                        P.POST_TITLE,
@@ -43,7 +44,7 @@ public class PostListDAO {
                                FROM POST
                                WHERE POST_EMAIL = ?) P
                               ON P.POST_ID = I.IMG_POST""";
-        try{
+        try {
             return jdbcTemplate.query(sql, new Object[]{email}, new CommonRowMapper());
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -64,14 +65,14 @@ public class PostListDAO {
                       WHERE IMG_ID IN (SELECT MIN(IMG_ID)
                                        FROM POST_IMG
                                        GROUP BY IMG_POST)) I
-                         JOIN (SELECT POST_ID,
+                         RIGHT JOIN (SELECT POST_ID,
                                       POST_TITLE,
                                       POST_PRICE,
                                       POST_REGION
                                FROM POST
                                WHERE POST_REGION = ? AND POST_CATEGORY = ? AND POST_DISABLED = 0) P
                               ON P.POST_ID = I.IMG_POST""";
-        try{
+        try {
             return jdbcTemplate.query(sql, new Object[]{region, category}, new CommonRowMapper());
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -93,7 +94,7 @@ public class PostListDAO {
                       WHERE IMG_ID IN (SELECT MIN(IMG_ID)
                                        FROM POST_IMG
                                        GROUP BY IMG_POST)) I
-                         JOIN (SELECT POST_ID,
+                         RIGHT JOIN (SELECT POST_ID,
                                       POST_TITLE,
                                       POST_PRICE,
                                       POST_REGION
@@ -121,4 +122,52 @@ public class PostListDAO {
             );
         }
     }
+
+    // 카테고리/지역 상관없이 조회수 상위 8개 게시물
+    public List<PostVO> getTopEightPostList() {
+        String sql = """
+                SELECT P.POST_ID, P.POST_TITLE, P.POST_REGION, I.IMG_URL
+                FROM (SELECT IMG_POST, IMG_URL
+                      FROM POST_IMG
+                      WHERE IMG_ID IN (SELECT MIN(IMG_ID)
+                                       FROM POST_IMG
+                                       GROUP BY IMG_POST)) I
+                         RIGHT JOIN (SELECT POST_ID,
+                                      POST_TITLE,
+                                      POST_REGION,
+                                      POST_VIEW
+                               FROM POST
+                               WHERE POST_DISABLED = 0 AND ROWNUM <= 8
+                               ORDER BY POST_VIEW DESC) P
+                ON I.IMG_POST = P.POST_ID
+                
+                """;
+
+
+        try {
+            List<PostVO> lst = jdbcTemplate.query(sql, new MainSlickRowMapper());
+            for (PostVO post : lst) {
+                post.setPostRegion(getRegionName(post.getPostRegion()));
+            }
+
+            return lst;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static class MainSlickRowMapper implements RowMapper<PostVO> {
+        @Override
+        public PostVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new PostVO(
+                    rs.getString("POST_ID"),
+                    rs.getString("POST_TITLE"),
+                    rs.getString("POST_REGION"),
+                    rs.getString("IMG_URL")
+            );
+        }
+    }
+
+
+
 }
