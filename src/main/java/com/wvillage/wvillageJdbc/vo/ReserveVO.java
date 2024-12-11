@@ -18,4 +18,9 @@ public class ReserveVO {
     private String reserveState;
     private boolean reserveMagRead;
     private String reserveReason; // 거부/취소 사유
+
+    public ReserveVO(Date reserveStart, Date reserveEnd) {
+        this.reserveStart = reserveStart;
+        this.reserveEnd = reserveEnd;
+    }
 }
