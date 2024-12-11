@@ -24,17 +24,17 @@ public class PostVO {
     private int bookmarked;
     private String postRegion;
     private int postDeal;
-    private boolean postEnable;
+    private boolean postDisable;
     private String postLocation;  //상세위치
 
     // 일반 조회 목록에서
-    public PostVO(String postId, String postCat, String postTitle, int postPrice, String postRegion, boolean postEnable) {
+    public PostVO(String postId, String postCat, String postTitle, int postPrice, String postRegion, boolean postDisable) {
         this.postId = postId;
         this.postCat = postCat;
         this.postTitle = postTitle;
         this.postPrice = postPrice;
         this.postRegion = postRegion;
-        this.postEnable = postEnable;
+        this.postDisable = postDisable;
     }
 
     public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail, int postViews, Date postDate) {
@@ -48,13 +48,13 @@ public class PostVO {
     }
 
     //
-    public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail, boolean postEnable) {
+    public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail, boolean postDisable) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postPrice = postPrice;
         this.postRegion = postRegion;
         this.postThumbnail = postThumbnail;
-        this.postEnable = postEnable;
+        this.postDisable = postDisable;
     }
 
     public PostVO(String postEmail, String postCat, String postTitle, String postContent, int postPrice, String postRegion, String postLocation) {
@@ -68,7 +68,8 @@ public class PostVO {
     }
 
     // 게시글 내용
-    public PostVO(String postId, String postTitle, int postViews,int postPrice, int postDeal, int bookmarked,String postRegion, String postLocation, String postContent){
+    public PostVO(String postId, String postTitle, int postViews,int postPrice, int postDeal,
+                  int bookmarked,String postRegion, String postLocation, String postContent, boolean postDisable) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postViews = postViews;
@@ -78,6 +79,7 @@ public class PostVO {
         this.postRegion = postRegion;
         this.postLocation = postLocation;
         this.postContent = postContent;
+        this.postDisable = postDisable;
     }
 
     // 메인화면 슬릭

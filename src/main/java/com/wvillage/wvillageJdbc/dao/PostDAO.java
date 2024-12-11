@@ -107,8 +107,8 @@ public class PostDAO extends BaseDAO {
                     rs.getInt("POST_BK"),
                     rs.getString("POST_REGION"),
                     rs.getString("POST_LOCATION"),
-                    rs.getString("POST_CONTENT")
-
+                    rs.getString("POST_CONTENT"),
+                    rs.getBoolean("POST_DISABLED")
             );
         }
     }
