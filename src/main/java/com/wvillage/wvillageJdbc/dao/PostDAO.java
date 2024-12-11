@@ -60,10 +60,15 @@ public class PostDAO extends BaseDAO {
     // 게시글 세부 내용 반환
     public PostVO getPostDetail(String postId) {
         String sql = """
-                SELECT COUNT(B.BK_POST) AS POST_BK, POST_ID, POST_TITLE, POST_DEAL,POST_VIEW, POST_PRICE, POST_CONTENT, POST_LOCATION, POST_REGION
+                SELECT COUNT(B.BK_POST) AS POST_BK,
+                       POST_ID, POST_TITLE,
+                       POST_DEAL, POST_VIEW,
+                       POST_PRICE, POST_CONTENT,
+                       POST_LOCATION, POST_REGION,
+                       POST_DISABLED
                 FROM BOOKMARK B
                          RIGHT JOIN (SELECT * FROM POST WHERE POST_ID = ?) P ON P.POST_ID = B.BK_POST
-                GROUP BY POST_ID, POST_TITLE, POST_VIEW, POST_PRICE, POST_CONTENT, POST_LOCATION, POST_REGION, POST_DEAL
+                GROUP BY POST_ID, POST_TITLE, POST_VIEW, POST_PRICE, POST_CONTENT, POST_LOCATION, POST_REGION, POST_DEAL, POST_DISABLED
                 """;
 
         try {
