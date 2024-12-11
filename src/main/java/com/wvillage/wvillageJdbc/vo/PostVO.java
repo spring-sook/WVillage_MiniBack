@@ -21,6 +21,7 @@ public class PostVO {
     private String postThumbnail;
     private int postViews;
     private int postPrice;
+    private int bookmarked;
     private String postRegion;
     private int postDeal;
     private boolean postEnable;
@@ -46,6 +47,7 @@ public class PostVO {
         this.postDate = postDate;
     }
 
+    //
     public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail, boolean postEnable) {
         this.postId = postId;
         this.postTitle = postTitle;
@@ -66,8 +68,16 @@ public class PostVO {
     }
 
     // 게시글 내용
-    public PostVO(String postId, String postTitle, int postViews,int postPrice, String postContent, String postLocation, int postDeal){
-//        POST_ID, POST_VIEW, POST_PRICE, POST_CONTENT, POST_LOCATION, COUNT(*) AS POST_BK
+    public PostVO(String postId, String postTitle, int postViews,int postPrice, int postDeal, int bookmarked,String postRegion, String postLocation, String postContent){
+        this.postId = postId;
+        this.postTitle = postTitle;
+        this.postViews = postViews;
+        this.postPrice = postPrice;
+        this.postDeal = postDeal;
+        this.bookmarked = bookmarked;
+        this.postRegion = postRegion;
+        this.postLocation = postLocation;
+        this.postContent = postContent;
     }
 
     // 메인화면 슬릭

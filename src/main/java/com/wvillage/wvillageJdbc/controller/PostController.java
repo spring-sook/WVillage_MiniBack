@@ -29,6 +29,7 @@ public class PostController {
             return ResponseEntity.status(500).body(false);
         }
     }
+
     public static class PostRequest {
         private PostVO postVo;
         private List<String> imgUrls;
@@ -51,14 +52,19 @@ public class PostController {
         }
     }
 
+    // 게시글의 사진 정보
     @GetMapping("/images/{postId}")
     public ResponseEntity<List<String>> getImages(@PathVariable String postId) {
         List<String> lst = postDao.getImgUrls(postId);
         return ResponseEntity.ok(lst);
     }
 
-//    @GetMapping("/datails/{postId}")
-//    public ResponseEntity<List<PostVO>> getDatails(@PathVariable String postId) {}
+    // 게시글의 세부 정보
+    @GetMapping("/details/{postId}")
+    public ResponseEntity<PostVO> getDatails(@PathVariable String postId) {
+        PostVO vo = postDao.getPostDetail(postId);
+        return ResponseEntity.ok(vo);
+    }
 
 
     @GetMapping("/getRegion/{areaCode}")

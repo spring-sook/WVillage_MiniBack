@@ -45,6 +45,15 @@ public class MemberVO {
         this.point = point;
     }
 
+    // 게시글을 올린 유저의 정보
+    public MemberVO(String email, String nickname, String profileImg, String areaCode, int point) {
+        this.email = email;
+        this.nickname = nickname;
+        this.profileImg = profileImg;
+        this.areaCode = areaCode;
+        this.point = point;
+    }
+
     public MemberVO(String email, String areaCode) {
         this.email = email;
         this.areaCode = areaCode;
