@@ -39,8 +39,7 @@ public class BookmarkController {
     }
 
     @GetMapping("/bookmarkedList")
-    public ResponseEntity<List<PostVO>> bookmarkedPostList(@RequestBody String email) {
-        log.info("Received email: {}", email);
+    public ResponseEntity<List<PostVO>> bookmarkedPostList(@RequestParam String email) {
         List<PostVO> list = bookmarkDAO.getBookmarkedPostList(email);
         return ResponseEntity.ok(list);
     }
