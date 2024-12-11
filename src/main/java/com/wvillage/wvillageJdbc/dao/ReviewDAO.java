@@ -60,8 +60,8 @@ public class ReviewDAO {
     // 게시글에 달린 리뷰 목록 반환
     public List<ReviewVO> getPostReviewList(String postId) {
         String sql = """
-                SELECT M.NICKNAME, M.PROFILE_IMG, R.REVIEW_TAG 
-                FROM MEMBER M JOIN REVIEW R 
+                SELECT M.NICKNAME, M.PROFILE_IMG, R.REVIEW_TAG
+                FROM MEMBER M JOIN REVIEW R
                     ON M.EMAIL = R.REVIEW_EMAIL
                 WHERE R.REVIEW_RESERVE IN (SELECT RES_ID 
                                            FROM RESERVE 
