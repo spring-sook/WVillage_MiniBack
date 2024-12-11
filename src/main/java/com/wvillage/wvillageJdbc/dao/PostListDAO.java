@@ -167,7 +167,6 @@ public class PostListDAO extends BaseDAO {
                 
                 """;
 
-
         try {
             List<PostVO> lst = jdbcTemplate.query(sql, new MainSlickRowMapper());
             for (PostVO post : lst) {
@@ -191,6 +190,8 @@ public class PostListDAO extends BaseDAO {
             );
         }
     }
+
+    // 내가 한 예약 목록의 게시글 정보
 
 
 
