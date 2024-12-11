@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 @Slf4j
 @RequiredArgsConstructor
-public class PostDAO {
+public class PostDAO extends BaseDAO {
     private final JdbcTemplate jdbcTemplate;
     private static final String INSERT_POST_WRITE = "INSERT INTO POST (POST_EMAIL, POST_CATEGORY, " + "POST_TITLE, POST_CONTENT, POST_PRICE, " + "POST_REGION, POST_LOCATION) " + "VALUES (?, ?, ?, ?, ?, ?, ?) ";
     private static final String GET_LAST_POSTID = "SELECT MAX(TO_NUMBER(REGEXP_SUBSTR(POST_ID, '\\d+$'))) " + "FROM POST";
@@ -56,14 +56,25 @@ public class PostDAO {
         }
     }
 
+
     // 게시글 세부 내용 반환
-//    public PostVO getPostDetail(String postId) {
-//        String sql = """
-//                SELECT POST_ID, POST_TITLE,POST_VIEW, POST_PRICE, POST_CONTENT, POST_LOCATION, COUNT(*) AS POST_BK
-//                FROM BOOKMARK
-//                RIGHT JOIN (SELECT * FROM POST WHERE POST_ID = ?);
-//                """;
-//    }
+    public PostVO getPostDetail(String postId) {
+        String sql = """
+                SELECT COUNT(*) AS POST_BK, POST_ID, POST_TITLE, POST_DEAL,POST_VIEW, POST_PRICE, POST_CONTENT, POST_LOCATION, POST_REGION
+                FROM BOOKMARK B
+                         JOIN (SELECT * FROM POST WHERE POST_ID = ?) P ON P.POST_ID = B.BK_POST
+                GROUP BY POST_ID, POST_TITLE, POST_VIEW, POST_PRICE, POST_CONTENT, POST_LOCATION, POST_REGION, POST_DEAL;
+                """;
+
+        try {
+            PostVO vo = jdbcTemplate.queryForObject(sql, new Object[]{postId}, new DeatailRowMapper());
+            vo.setPostRegion(getRegionName(vo.getPostRegion()));
+            return vo;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
 
     // 조회수 업데이트
     public Boolean postViewUpdate(String postId) {
@@ -77,6 +88,7 @@ public class PostDAO {
     }
 
 
+    // 상세 내용 RowMapper
     private static class DeatailRowMapper implements RowMapper<PostVO> {
 
         @Override
@@ -86,9 +98,12 @@ public class PostDAO {
                     rs.getString("POST_TITLE"),
                     rs.getInt("POST_VIEW"),
                     rs.getInt("POST_PRICE"),
-                    rs.getString("POST_CONTENT"),
+                    rs.getInt("POST_DEAL"),
+                    rs.getInt("POST_BK"),
+                    rs.getString("POST_REGION"),
                     rs.getString("POST_LOCATION"),
-                    rs.getInt("POST_BK")
+                    rs.getString("POST_CONTENT")
+
             );
         }
     }

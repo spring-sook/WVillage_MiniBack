@@ -62,7 +62,6 @@ public class PostListDAO extends BaseDAO {
                     rs.getString("POST_REGION"),
                     rs.getString("IMG_URL"),
                     rs.getBoolean("POST_DISABLED")
-
             );
         }
     }
