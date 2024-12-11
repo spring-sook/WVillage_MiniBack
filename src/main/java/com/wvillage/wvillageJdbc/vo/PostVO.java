@@ -69,7 +69,7 @@ public class PostVO {
 
     // 게시글 내용
     public PostVO(String postId, String postTitle, int postViews,int postPrice, int postDeal,
-                  int bookmarked,String postRegion, String postLocation, String postContent, boolean postDisable) {
+                  int bookmarked,String postRegion, String postLocation, String postContent, boolean postDisable, String postEmail) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postViews = postViews;
@@ -80,6 +80,7 @@ public class PostVO {
         this.postLocation = postLocation;
         this.postContent = postContent;
         this.postDisable = postDisable;
+        this.postEmail = postEmail;
     }
 
     // 메인화면 슬릭
