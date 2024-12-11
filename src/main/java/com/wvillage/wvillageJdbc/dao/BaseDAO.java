@@ -16,37 +16,31 @@ public class BaseDAO {
 
     // 지역코드를 이름으로 바꾸기
     public String getRegionName(String regionCode) {
-        String sql = "SELECT REGION_SIDO, REGION_SIGUN, REGION_GU, REGION_EMD, REGION_RI FROM REGION WHERE REGION_CODE = ?";
+        String sql = "SELECT REGION_SIDO, REGION_SIGUNGU, REGION_EMD, REGION_RI FROM REGION WHERE REGION_CODE = ?";
 
         try {
             Map<String, Object> row = jdbcTemplate.queryForMap(sql, regionCode);
 
             // 각 열의 값을 가져와서 문자열로 결합
             String regionSido = (String) row.get("REGION_SIDO");
-            String regionSigun = (String) row.get("REGION_SIGUN");
-            String regionGu = (String) row.get("REGION_GU");
+            String regionSiGunGu = (String) row.get("REGION_SIGUNGU");
             String regionEmd = (String) row.get("REGION_EMD");
             String regionRi = (String) row.get("REGION_RI");
 
             StringBuilder regionName = new StringBuilder(regionSido);
 
             // 시/군 이 존재하는 경우 추가
-            if (!regionSigun.equalsIgnoreCase("nan")) {
-                regionName.append(" ").append(regionSigun);
-            }
-
-            // 구 추가
-            if (!regionGu.equalsIgnoreCase("nan")) {
-                regionName.append(" ").append(regionGu);
+            if (regionSiGunGu != null) {
+                regionName.append(" ").append(regionSiGunGu);
             }
 
             // 읍면동 추가
-            if (!regionEmd.equalsIgnoreCase("nan")) {
+            if (regionEmd != null) {
                 regionName.append(" ").append(regionEmd);
             }
 
             // 리 추가
-            if (!regionRi.equalsIgnoreCase("nan")) {
+            if (regionRi != null) {
                 regionName.append(" ").append(regionRi);
             }
 
