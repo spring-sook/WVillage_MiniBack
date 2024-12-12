@@ -46,6 +46,12 @@ public class PostListController {
         return ResponseEntity.ok(lst);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<PostVO>> search(@RequestParam String region,
+                                               @RequestParam String keyword) {
+        List<PostVO> lst = postListDAO.searchPostList(region, keyword);
+        return ResponseEntity.ok(lst);
+    }
 
 }
 

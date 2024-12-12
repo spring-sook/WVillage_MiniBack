@@ -22,7 +22,6 @@ public class PostListDAO extends BaseDAO {
     private final JdbcTemplate jdbcTemplate;
 
 
-
     // 특정 유저가 게시한 게시글 목록 불러오기
     public List<PostVO> getUserProfilePostList(String email) {
         String sql = """
@@ -208,7 +207,62 @@ public class PostListDAO extends BaseDAO {
         }
     }
 
+    // 검색어
+    public List<PostVO> searchPostList(String region, String keyword) {
+        // 공백으로 단어 분할
+        String[] keywords = keyword.split("\\s+");
+        StringBuilder likeClause = new StringBuilder();
 
+        // 각 단어에 대해 LIKE 조건 생성
+        for (int i = 0; i < keywords.length; i++) {
+            if (i > 0) {
+                likeClause.append(" OR ");
+            }
+            likeClause.append("P.POST_TITLE LIKE ?");
+        }
+
+        String sql = """
+                SELECT P.POST_ID,
+                       P.POST_TITLE,
+                       P.POST_PRICE,
+                       P.POST_REGION,
+                       I.IMG_URL,
+                       P.POST_VIEW,
+                       P.POST_DATE
+                FROM (SELECT IMG_POST, IMG_URL
+                      FROM POST_IMG
+                      WHERE IMG_ID IN (SELECT IMG_ID
+                                       FROM (SELECT IMG_ID,
+                                                    ROW_NUMBER() OVER
+                                                    (PARTITION BY IMG_POST
+                                                     ORDER BY TO_NUMBER(SUBSTR(IMG_ID, 5))) AS rn
+                                             FROM POST_IMG)
+                                       WHERE rn = 1)) I
+                RIGHT JOIN (SELECT POST_ID,
+                                   POST_TITLE,
+                                   POST_PRICE,
+                                   POST_REGION,
+                                   POST_VIEW,
+                                   POST_DATE
+                            FROM POST
+                            WHERE POST_REGION = ? AND POST_DISABLED = 0 AND (%s)) P
+                ON P.POST_ID = I.IMG_POST
+                """.formatted(likeClause.toString());
+
+        // 파라미터 배열 생성
+        Object[] params = new Object[keywords.length + 1];
+        params[0] = region;
+        for (int i = 0; i < keywords.length; i++) {
+            params[i + 1] = "%" + keywords[i] + "%";
+        }
+
+        try {
+            return jdbcTemplate.query(sql, params, new CommonRowMapper());
+        } catch (Exception e) {
+            log.error("{}, 검색 실패, {}", region, e.getMessage());
+            return null;
+        }
+    }
 
 
 }
