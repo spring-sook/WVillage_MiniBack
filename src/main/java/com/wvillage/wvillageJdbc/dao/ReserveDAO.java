@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -213,7 +214,9 @@ public class ReserveDAO extends BaseDAO {
                 VALUES (?,?,?,?);
                 """;
         try {
-            int rows = jdbcTemplate.update(sql, vo.getReservePost(), vo.getReserveEmail(), vo.getReserveStart(), vo.getReserveEnd());
+            int rows = jdbcTemplate.update(sql, vo.getReservePost(), vo.getReserveEmail(),
+                    vo.getReserveStart().atZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime(),
+                    vo.getReserveEnd().atZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
             return rows > 0;
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -236,24 +239,24 @@ public class ReserveDAO extends BaseDAO {
 
     private boolean updateReserve(ReserveVO vo, boolean isApprove) {
         String updateReserve = """
-            UPDATE RESERVE
-            SET RES_STATE = ?, RES_NEW_MSG = ?
-            WHERE RES_ID = ?
-            """;
+                UPDATE RESERVE
+                SET RES_STATE = ?, RES_NEW_MSG = ?
+                WHERE RES_ID = ?
+                """;
 
         String updateOwner = """
-            UPDATE MEMBER
-            SET POINT = POINT + ?
-            WHERE EMAIL = (SELECT EMAIL
-            FROM POST
-            WHERE POST_ID = ?)
-            """;
+                UPDATE MEMBER
+                SET POINT = POINT + ?
+                WHERE EMAIL = (SELECT EMAIL
+                FROM POST
+                WHERE POST_ID = ?)
+                """;
 
         String updateCustomer = """
-            UPDATE MEMBER
-            SET POINT = POINT - ?
-            WHERE EMAIL = ?
-            """;
+                UPDATE MEMBER
+                SET POINT = POINT - ?
+                WHERE EMAIL = ?
+                """;
 
         try {
             int rows = jdbcTemplate.update(updateReserve, vo.getReserveState(), 1, vo.getReserveId());
@@ -279,10 +282,10 @@ public class ReserveDAO extends BaseDAO {
                 UPDATE RESERVE SET RES_STATE = ?, RES_NEW_MSG = ? WHERE RES_ID = ?
                 """;
 
-        try{
+        try {
             int rows = jdbcTemplate.update(sql, vo.getReserveState(), 1, vo.getReserveId());
             return rows > 0;
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return false;
         }
