@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Slf4j
@@ -16,6 +17,8 @@ public class BaseDAO {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     // 지역코드를 이름으로 바꾸기
     public String getRegionName(String regionCode) {
