@@ -26,9 +26,17 @@ public class ReserveController {
         return ResponseEntity.ok(list);
     }
 
+    // 내가 예약한 예약목록
     @GetMapping("/myReserveList/{email}")
     public ResponseEntity<List<CommonVo>> getMyReserveList(@PathVariable String email) {
         List<CommonVo> list = reserveDAO.getMyReserveList(email);
+        return ResponseEntity.ok(list);
+    }
+
+    // 내 게시물의 예약 요청
+    @GetMapping("/myReserveManagement/{email}")
+    public ResponseEntity<List<CommonVo>> getMyReserveManagement(@PathVariable String email) {
+        List<CommonVo> list = reserveDAO.getReserveListManagement(email);
         return ResponseEntity.ok(list);
     }
 }

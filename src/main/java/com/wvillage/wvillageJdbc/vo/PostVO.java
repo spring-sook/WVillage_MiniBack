@@ -48,6 +48,7 @@ public class PostVO {
     }
 
 
+    // 내가 예약한 예약 게시글 목록
     public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail) {
         this.postId = postId;
         this.postTitle = postTitle;
@@ -56,7 +57,16 @@ public class PostVO {
         this.postThumbnail = postThumbnail;
     }
 
-    //
+    // 내 게시글에 들어온 예약 게시글 목록
+    public PostVO(String postId, String postTitle, String postRegion, String postLocation,String postThumbnail) {
+        this.postId = postId;
+        this.postTitle = postTitle;
+        this.postLocation = postLocation;
+        this.postRegion = postRegion;
+        this.postThumbnail = postThumbnail;
+    }
+
+    // 특정 유저가 게시한 게시글
     public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail, boolean postDisable) {
         this.postId = postId;
         this.postTitle = postTitle;
