@@ -214,8 +214,8 @@ public class ReserveDAO extends BaseDAO {
     // 새 예약 등록
     public boolean insertReserve(ReserveVO vo) {
         String sql = """
-                INSERT INTO RESERVE (RES_POST, RES_EMAIL, RES_START, RES_END)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO RESERVE (RES_POST, RES_EMAIL, RES_START, RES_END, RES_STATE)
+                VALUES (?, ?, ?, ?, 'wait')
                 """;
         try {
             // ZonedDateTime 또는 Instant를 사용하는 경우
