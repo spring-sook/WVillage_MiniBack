@@ -2,6 +2,7 @@ package com.wvillage.wvillageJdbc.vo;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -13,14 +14,22 @@ public class ReserveVO {
     private String reserveId;
     private String reservePost;
     private String reserveEmail;
-    private Date reserveStart;
-    private Date reserveEnd;
+    private LocalDateTime reserveStart;
+    private LocalDateTime reserveEnd;
     private String reserveState;
     private boolean reserveMagRead;
     private String reserveReason; // 거부/취소 사유
 
-    public ReserveVO(Date reserveStart, Date reserveEnd) {
+    public ReserveVO(LocalDateTime reserveStart, LocalDateTime reserveEnd) {
         this.reserveStart = reserveStart;
         this.reserveEnd = reserveEnd;
+    }
+
+    public ReserveVO(String reserveId, LocalDateTime reserveStart, LocalDateTime reserveEnd, String reserveState, String reserveReason) {
+        this.reserveId = reserveId;
+        this.reserveStart = reserveStart;
+        this.reserveEnd = reserveEnd;
+        this.reserveState = reserveState;
+        this.reserveReason = reserveReason;
     }
 }

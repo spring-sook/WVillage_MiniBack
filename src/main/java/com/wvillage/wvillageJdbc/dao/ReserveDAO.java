@@ -1,6 +1,9 @@
 package com.wvillage.wvillageJdbc.dao;
 
+import com.wvillage.wvillageJdbc.vo.CommonVo;
+import com.wvillage.wvillageJdbc.vo.PostVO;
 import com.wvillage.wvillageJdbc.vo.ReserveVO;
+import com.wvillage.wvillageJdbc.vo.ReviewVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,7 +17,7 @@ import java.util.List;
 @Repository
 @Slf4j
 @RequiredArgsConstructor
-public class ReserveDAO {
+public class ReserveDAO extends BaseDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -36,8 +39,83 @@ public class ReserveDAO {
         @Override
         public ReserveVO mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new ReserveVO(
-                    rs.getDate("RES_START"),
-                    rs.getDate("RES_START")
+                    rs.getTimestamp("RES_START").toLocalDateTime(),
+                    rs.getTimestamp("RES_START").toLocalDateTime()
+            );
+        }
+    }
+
+    // 내가 한 예약 보기
+    public List<CommonVo> getMyReserveList(String email) {
+        String sql = """
+                SELECT I.IMG_URL,
+                       P.POST_ID,
+                       P.POST_TITLE,
+                       P.POST_PRICE,
+                       P.POST_REGION,
+                       RS.RES_ID,
+                       RS.RES_START,
+                       RS.RES_END,
+                       RS.RES_STATE,
+                       RS.RES_REASON,
+                       RV.REVIEW_ID,
+                       RV.REVIEW_TAG
+                FROM (SELECT *
+                      FROM RESERVE
+                      WHERE RES_EMAIL = ?) RS
+                         LEFT JOIN (SELECT IMG_POST, IMG_URL
+                                    FROM POST_IMG
+                                    WHERE IMG_ID IN (SELECT MIN(IMG_ID)
+                                                     FROM POST_IMG
+                                                     GROUP BY IMG_POST)) I
+                                   ON I.IMG_POST = RS.RES_POST
+                         LEFT JOIN (SELECT POST_ID,
+                                            POST_TITLE,
+                                            POST_PRICE,
+                                            POST_REGION
+                                     FROM POST) P
+                                    ON RS.RES_POST = P.POST_ID
+                         LEFT JOIN REVIEW RV ON RV.REVIEW_RESERVE = RS.RES_ID
+                """;
+
+        try {
+            List<CommonVo> lst = jdbcTemplate.query(sql, new Object[]{email}, new myReserveListMapper());
+
+            for (CommonVo vo : lst) {
+                log.warn(vo.getReview().getReviewContent()); // String, String 때문에 tags 대신 Content 사용
+                ReviewVO rvo = new ReviewVO(vo.getReview().getReviewId(), tagsIntoString(vo.getReview().getReviewContent()));
+                vo.setReview(rvo);
+            }
+
+            return lst;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+
+    private static class myReserveListMapper implements RowMapper<CommonVo> {
+        @Override
+        public CommonVo mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new CommonVo(
+                    new PostVO(
+                            rs.getString("POST_ID"),
+                            rs.getString("POST_TITLE"),
+                            rs.getInt("POST_PRICE"),
+                            rs.getString("POST_REGION"),
+                            rs.getString("IMG_URL")
+                    ),
+                    new ReserveVO(
+                            rs.getString("RES_ID"),
+                            rs.getTimestamp("RES_START").toLocalDateTime(),
+                            rs.getTimestamp("RES_END").toLocalDateTime(),
+                            rs.getString("RES_STATE"),
+                            rs.getString("RES_REASON")
+                    ),
+                    new ReviewVO(
+                            rs.getString("REVIEW_ID"),
+                            rs.getString("REVIEW_TAG")
+                    )
             );
         }
     }
