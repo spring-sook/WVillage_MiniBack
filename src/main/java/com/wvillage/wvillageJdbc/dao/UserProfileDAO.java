@@ -23,7 +23,14 @@ public class UserProfileDAO extends BaseDAO {
 
     // 타 유저 프로필 페이지의 정보 불러오기
     public MemberVO getUserProfile(String email) {
-        String sql = "SELECT EMAIL, NICKNAME, PROFILE_IMG, SCORE, REPORT_COUNT from MEMBER WHERE EMAIL = ? ";
+        String sql = """
+                SELECT EMAIL, NICKNAME, PROFILE_IMG, SCORE, COUNT(*) AS REPORT_COUNT
+                FROM REPORT R
+                RIGHT JOIN (SELECT EMAIL, NICKNAME, PROFILE_IMG, SCORE
+                            FROM MEMBER
+                            WHERE EMAIL = ?) M ON R.REPORT_REPORTED = M.EMAIL
+                GROUP BY EMAIL, NICKNAME, PROFILE_IMG, SCORE
+                """;
         try {
             return jdbcTemplate.queryForObject(sql, new Object[]{email}, new userProfileInfoRowMapper());
         } catch (Exception e) {

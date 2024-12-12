@@ -26,9 +26,6 @@ public class MemberVO {
     private int reportCount;
 
 
-
-
-
     public MemberVO(String email, String nickname, String profileImg, int score, int reportCount) {
         this.email = email;
         this.nickname = nickname;
