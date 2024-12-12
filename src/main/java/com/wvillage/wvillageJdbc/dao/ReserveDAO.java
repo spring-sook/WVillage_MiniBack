@@ -43,7 +43,7 @@ public class ReserveDAO extends BaseDAO {
         public ReserveVO mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new ReserveVO(
                     rs.getTimestamp("RES_START").toLocalDateTime().format(formatter),
-                    rs.getTimestamp("RES_START").toLocalDateTime().format(formatter)
+                    rs.getTimestamp("RES_END").toLocalDateTime().format(formatter)
             );
         }
     }
