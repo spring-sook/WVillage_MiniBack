@@ -31,7 +31,6 @@ public class PostDAO extends BaseDAO {
                 String postId = jdbcTemplate.queryForObject(GET_LAST_POSTID, String.class);
 
                 for (String imgUrl : imgUrls) {
-                    log.error(imgUrl);
                     jdbcTemplate.update(INSERT_POST_IMG, "POST_" + postId, imgUrl);
                 }
                 return postId;
