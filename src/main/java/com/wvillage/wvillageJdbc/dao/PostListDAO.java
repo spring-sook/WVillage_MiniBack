@@ -33,9 +33,13 @@ public class PostListDAO extends BaseDAO {
                        P.POST_DISABLED
                 FROM (SELECT IMG_POST, IMG_URL
                       FROM POST_IMG
-                      WHERE IMG_ID IN (SELECT MIN(IMG_ID)
-                                       FROM POST_IMG
-                                       GROUP BY IMG_POST)) I
+                      WHERE IMG_ID IN (SELECT IMG_ID
+                                       FROM (SELECT IMG_ID,
+                                                    ROW_NUMBER() OVER
+                                                        (PARTITION BY IMG_POST
+                                                        ORDER BY TO_NUMBER(SUBSTR(IMG_ID, 5))) AS rn
+                                             FROM POST_IMG)
+                                       WHERE rn = 1)) I
                           RIGHT JOIN (SELECT POST_ID,
                                       POST_TITLE,
                                       POST_PRICE,
@@ -78,9 +82,13 @@ public class PostListDAO extends BaseDAO {
                        P.POST_DATE
                 FROM (SELECT IMG_POST, IMG_URL
                       FROM POST_IMG
-                      WHERE IMG_ID IN (SELECT MIN(IMG_ID)
-                                       FROM POST_IMG
-                                       GROUP BY IMG_POST)) I
+                      WHERE IMG_ID IN (SELECT IMG_ID
+                                       FROM (SELECT IMG_ID,
+                                                    ROW_NUMBER() OVER
+                                                        (PARTITION BY IMG_POST
+                                                        ORDER BY TO_NUMBER(SUBSTR(IMG_ID, 5))) AS rn
+                                             FROM POST_IMG)
+                                       WHERE rn = 1)) I
                          RIGHT JOIN (SELECT POST_ID,
                                       POST_TITLE,
                                       POST_PRICE,
@@ -110,10 +118,14 @@ public class PostListDAO extends BaseDAO {
                        P.POST_VIEW,
                        P.POST_DATE
                 FROM (SELECT IMG_POST, IMG_URL
-                      FROM POST_IMG
-                      WHERE IMG_ID IN (SELECT MIN(IMG_ID)
-                                       FROM POST_IMG
-                                       GROUP BY IMG_POST)) I
+                       FROM POST_IMG
+                       WHERE IMG_ID IN (SELECT IMG_ID
+                                        FROM (SELECT IMG_ID,
+                                                     ROW_NUMBER() OVER
+                                                         (PARTITION BY IMG_POST
+                                                         ORDER BY TO_NUMBER(SUBSTR(IMG_ID, 5))) AS rn
+                                              FROM POST_IMG)
+                                        WHERE rn = 1)) I
                          RIGHT JOIN (SELECT POST_ID,
                                       POST_TITLE,
                                       POST_PRICE,
@@ -153,9 +165,13 @@ public class PostListDAO extends BaseDAO {
                 SELECT P.POST_ID, P.POST_TITLE, P.POST_REGION, I.IMG_URL
                 FROM (SELECT IMG_POST, IMG_URL
                       FROM POST_IMG
-                      WHERE IMG_ID IN (SELECT MIN(IMG_ID)
-                                       FROM POST_IMG
-                                       GROUP BY IMG_POST)) I
+                      WHERE IMG_ID IN (SELECT IMG_ID
+                                       FROM (SELECT IMG_ID,
+                                                    ROW_NUMBER() OVER
+                                                        (PARTITION BY IMG_POST
+                                                        ORDER BY TO_NUMBER(SUBSTR(IMG_ID, 5))) AS rn
+                                             FROM POST_IMG)
+                                       WHERE rn = 1)) I
                          RIGHT JOIN (SELECT POST_ID,
                                       POST_TITLE,
                                       POST_REGION,
