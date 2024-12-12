@@ -52,6 +52,7 @@ public class ReserveController {
     // 예약하기
     @PostMapping("/reservation")
     public ResponseEntity<ReserveVO> insertReserve(@RequestBody ReserveVO reserveVO) {
+        log.warn(reserveVO.toString());
         boolean isSuccess = reserveDAO.insertReserve(reserveVO);
         if (isSuccess) {
             return ResponseEntity.ok(reserveVO);

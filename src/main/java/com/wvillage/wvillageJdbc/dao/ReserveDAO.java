@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -214,9 +215,9 @@ public class ReserveDAO extends BaseDAO {
                 VALUES (?,?,?,?);
                 """;
         try {
-            int rows = jdbcTemplate.update(sql, vo.getReservePost(), vo.getReserveEmail(),
-                    vo.getReserveStart().atZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime(),
-                    vo.getReserveEnd().atZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
+            Timestamp startTimestamp = Timestamp.valueOf(vo.getReserveStart().atZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
+            Timestamp endTimestamp = Timestamp.valueOf(vo.getReserveEnd().atZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
+            int rows = jdbcTemplate.update(sql, vo.getReservePost(), vo.getReserveEmail(), startTimestamp, endTimestamp);
             return rows > 0;
         } catch (Exception e) {
             log.error(e.getMessage());
