@@ -154,7 +154,7 @@ public class PostListDAO extends BaseDAO {
                     rs.getString("POST_REGION"),
                     rs.getString("IMG_URL"),
                     rs.getInt("POST_VIEW"),
-                    rs.getDate("POST_DATE")
+                    rs.getTimestamp("POST_DATE").toLocalDateTime().format(formatter)
             );
         }
     }
@@ -207,7 +207,6 @@ public class PostListDAO extends BaseDAO {
         }
     }
 
-    // 내가 한 예약 목록의 게시글 정보
 
 
 

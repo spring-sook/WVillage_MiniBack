@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Repository
@@ -21,6 +22,7 @@ import java.util.List;
 public class ReserveDAO extends BaseDAO {
 
     private final JdbcTemplate jdbcTemplate;
+
 
     public List<ReserveVO> getPostReserveList(String postId) {
         String sql = """
@@ -40,8 +42,8 @@ public class ReserveDAO extends BaseDAO {
         @Override
         public ReserveVO mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new ReserveVO(
-                    rs.getTimestamp("RES_START").toLocalDateTime(),
-                    rs.getTimestamp("RES_START").toLocalDateTime()
+                    rs.getTimestamp("RES_START").toLocalDateTime().format(formatter),
+                    rs.getTimestamp("RES_START").toLocalDateTime().format(formatter)
             );
         }
     }
@@ -112,8 +114,8 @@ public class ReserveDAO extends BaseDAO {
                     ),
                     new ReserveVO(
                             rs.getString("RES_ID"),
-                            rs.getTimestamp("RES_START").toLocalDateTime(),
-                            rs.getTimestamp("RES_END").toLocalDateTime(),
+                            rs.getTimestamp("RES_START").toLocalDateTime().format(formatter),
+                            rs.getTimestamp("RES_END").toLocalDateTime().format(formatter),
                             rs.getString("RES_STATE"),
                             rs.getString("RES_REASON")
                     ),
@@ -190,8 +192,8 @@ public class ReserveDAO extends BaseDAO {
                     ),
                     new ReserveVO(
                             rs.getString("RES_ID"),
-                            rs.getTimestamp("RES_START").toLocalDateTime(),
-                            rs.getTimestamp("RES_END").toLocalDateTime(),
+                            rs.getTimestamp("RES_START").toLocalDateTime().format(formatter),
+                            rs.getTimestamp("RES_END").toLocalDateTime().format(formatter),
                             rs.getString("RES_STATE"),
                             rs.getString("RES_REASON")
                     ),
@@ -218,44 +220,57 @@ public class ReserveDAO extends BaseDAO {
         }
     }
 
-    // 예약 승인 혹은 완료
+    // 예약 승인
     @Transactional
-    public boolean reservePositive(ReserveVO vo) {
+    public boolean reserveAccept(ReserveVO vo) {
+        return updateReserve(vo, true);
+    }
+
+    // 예약 취소
+    @Transactional
+    public boolean reserveCancel(ReserveVO vo) {
+        return updateReserve(vo, false);
+    }
+
+
+    private boolean updateReserve(ReserveVO vo, boolean isApprove) {
         String updateReserve = """
-                UPDATE RESERVE
-                SET RES_STATE = ?, RES_NEW_MSG = ?
-                WHERE RES_ID = ?
-                """;
+            UPDATE RESERVE
+            SET RES_STATE = ?, RES_NEW_MSG = ?
+            WHERE RES_ID = ?
+            """;
 
         String updateOwner = """
-                UPDATE MEMBER
-                SET POINT = POINT - ?
-                WHERE EMAIL = (SELECT EMAIL
-                FROM POST
-                WHERE POST_ID = ?)
-                """;
+            UPDATE MEMBER
+            SET POINT = POINT + ?
+            WHERE EMAIL = (SELECT EMAIL
+            FROM POST
+            WHERE POST_ID = ?)
+            """;
 
         String updateCustomer = """
-                UPDATE MEMBER
-                SET POINT = POINT + ?
-                WHERE EMAIL = ?
-                """;
+            UPDATE MEMBER
+            SET POINT = POINT - ?
+            WHERE EMAIL = ?
+            """;
 
         try {
             int rows = jdbcTemplate.update(updateReserve, vo.getReserveState(), 1, vo.getReserveId());
-            rows += jdbcTemplate.update(updateOwner, vo.getReserveTotalPrice(), vo.getReservePost());
-            rows += jdbcTemplate.update(updateCustomer, vo.getReserveTotalPrice(), vo.getReserveEmail());
+
+            // Owner's points update
+            int ownerPointChange = isApprove ? vo.getReserveTotalPrice() : -vo.getReserveTotalPrice();
+            rows += jdbcTemplate.update(updateOwner, ownerPointChange, vo.getReservePost());
+
+            // Customer's points update
+            int customerPointChange = isApprove ? -vo.getReserveTotalPrice() : vo.getReserveTotalPrice();
+            rows += jdbcTemplate.update(updateCustomer, customerPointChange, vo.getReserveEmail());
+
             return rows > 0;
         } catch (Exception e) {
             log.error(e.getMessage());
             return false;
         }
     }
-
-    // 예약 거절/취소
-//    public boolean reserveNegative(ReserveVO vo) {
-//        String sql-
-//    }
 
 
 }

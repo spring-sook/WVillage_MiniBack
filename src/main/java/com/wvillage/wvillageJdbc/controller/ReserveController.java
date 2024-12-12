@@ -60,10 +60,10 @@ public class ReserveController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    // 예약 승인 or 완료
-    @PostMapping("/positiveReserve")
+    // 예약 승인
+    @PostMapping("/reserveAccept")
     public ResponseEntity<ReserveVO> addPositiveReserve(@RequestBody ReserveVO reserveVO) {
-        boolean isSuccess = reserveDAO.reservePositive(reserveVO);
+        boolean isSuccess = reserveDAO.reserveAccept(reserveVO);
         if (isSuccess) {
             return ResponseEntity.ok(reserveVO);
         }
@@ -71,4 +71,5 @@ public class ReserveController {
     }
 
     // 예약 거절/취소
+
 }

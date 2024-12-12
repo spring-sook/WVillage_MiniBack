@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 @Slf4j
 @RequiredArgsConstructor
-public class BookmarkDAO {
+public class BookmarkDAO extends BaseDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -103,7 +103,7 @@ public class BookmarkDAO {
                     rs.getString("POST_REGION"),
                     rs.getString("IMG_URL"),
                     rs.getInt("POST_VIEW"),
-                    rs.getDate("POST_DATE")
+                    rs.getTimestamp("POST_DATE").toLocalDateTime().format(formatter)
             );
         }
     }

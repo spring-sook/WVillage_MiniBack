@@ -14,7 +14,7 @@ public class PostVO {
     private String postId;
     private String postEmail;
     private String postCat;
-    private Date postDate;
+    private String postDate;
     private String postTitle;
     private String postContent;
     private List<String> postImg;
@@ -37,7 +37,7 @@ public class PostVO {
         this.postDisable = postDisable;
     }
 
-    public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail, int postViews, Date postDate) {
+    public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail, int postViews, String postDate) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postPrice = postPrice;
