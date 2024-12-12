@@ -201,4 +201,20 @@ public class ReserveDAO extends BaseDAO {
             );
         }
     }
+
+    public boolean insertReserve(ReserveVO vo) {
+        String sql = """
+                INSERT INTO RESERVE (RES_POST, RES_EMAIL ,RES_START, RES_END, RES_STATE, RES_MSG_READ)
+                VALUES (?,?,?,?,?);
+                """;
+        try{
+            int rows = jdbcTemplate.update(sql, vo.getReservePost(), vo.getReserveEmail(), vo.getReserveStart(), vo.getReserveEnd(), "wait", 1);
+            return rows > 0;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return false;
+        }
+    }
+
+
 }
