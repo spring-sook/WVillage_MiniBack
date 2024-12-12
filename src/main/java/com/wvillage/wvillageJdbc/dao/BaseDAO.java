@@ -1,12 +1,15 @@
 package com.wvillage.wvillageJdbc.dao;
 
 import com.wvillage.wvillageJdbc.vo.RegionVO;
+import com.wvillage.wvillageJdbc.vo.ReviewVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
-import java.util.List;
-import java.util.Map;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 @Slf4j
 public class BaseDAO {
@@ -48,6 +51,45 @@ public class BaseDAO {
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
+        }
+    }
+
+    // 태그 아이디를 내용으로 변환하기
+    public List<String> tagsIntoString(String tags) {
+        String sql = "SELECT TAG_ID, TAG_CONTENT FROM REVIEW_TAG";
+        Map<String, String> tagsMap = new HashMap<>();
+
+        try {
+            List<ReviewVO> revList = jdbcTemplate.query(sql, new tagsContentRowMapper());
+            for (ReviewVO review : revList) {
+                tagsMap.put(review.getReviewId(), review.getReviewContent());
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+
+        List<String> tagsList = new ArrayList<>(Arrays.asList(tags.split(",")));
+        List<String> resultList = new ArrayList<>();
+
+        for (String tag : tagsList) {
+            String content = tagsMap.get(tag.trim()); // 공백 제거 후 키로 사용
+            if (content != null) {
+                resultList.add(content);
+            } else {
+                resultList.add("Unknown Tag"); // 존재하지 않는 태그에 대한 처리
+            }
+        }
+
+        return resultList;
+    }
+
+    private static class tagsContentRowMapper implements RowMapper<ReviewVO> {
+        @Override
+        public ReviewVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new ReviewVO(
+                    rs.getString("TAG_ID"),
+                    rs.getString("TAG_CONTENT")
+            );
         }
     }
 
