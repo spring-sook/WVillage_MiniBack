@@ -39,4 +39,14 @@ public class ReserveController {
         List<CommonVo> list = reserveDAO.getReserveListManagement(email);
         return ResponseEntity.ok(list);
     }
+
+    // 예약하기
+    @PostMapping("/reservation")
+    public ResponseEntity<ReserveVO> addReserve(@RequestBody ReserveVO reserveVO) {
+        boolean isSuccess = reserveDAO.insertReserve(reserveVO);
+        if (isSuccess) {
+            return ResponseEntity.ok(reserveVO);
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
 }
