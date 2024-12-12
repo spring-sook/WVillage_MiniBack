@@ -47,6 +47,15 @@ public class PostVO {
         this.postDate = postDate;
     }
 
+
+    public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail) {
+        this.postId = postId;
+        this.postTitle = postTitle;
+        this.postPrice = postPrice;
+        this.postRegion = postRegion;
+        this.postThumbnail = postThumbnail;
+    }
+
     //
     public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail, boolean postDisable) {
         this.postId = postId;

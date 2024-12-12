@@ -1,6 +1,7 @@
 package com.wvillage.wvillageJdbc.controller;
 
 import com.wvillage.wvillageJdbc.dao.ReserveDAO;
+import com.wvillage.wvillageJdbc.vo.CommonVo;
 import com.wvillage.wvillageJdbc.vo.ReserveVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,12 @@ public class ReserveController {
     @GetMapping("/post/{postId}")
     public ResponseEntity<List<ReserveVO>> getPostReserveList(@PathVariable String postId) {
         List<ReserveVO> list = reserveDAO.getPostReserveList(postId);
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/myReserveList/{email}")
+    public ResponseEntity<List<CommonVo>> getMyReserveList(@PathVariable String email) {
+        List<CommonVo> list = reserveDAO.getMyReserveList(email);
         return ResponseEntity.ok(list);
     }
 }
