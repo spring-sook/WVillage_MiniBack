@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -49,19 +51,58 @@ public class AuthController {
 
     @GetMapping("/find-email")
     public ResponseEntity<String> findEmail(
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "phone", required = false) String phone
+            @RequestParam String name,
+            @RequestParam String phone
     ) {
-        log.info("이메일 찾기 요청: 이름={}, 전화번호={}", name, phone);
-        String email = authDao.findEmailByNameAndPhone(name, phone);
+        // 전화번호에서 하이픈 제거
+        String sanitizedPhone = phone.replaceAll("-", ""); // "-" 제거
+        log.info("이메일 찾기 요청: 이름={}, 전화번호(처리됨)={}", name, sanitizedPhone);
+
+        String email = authDao.findEmailByNameAndPhone(name, sanitizedPhone);
 
         if (email != null) {
             log.info("이메일 찾기 성공: {}", email);
             return ResponseEntity.ok(email);
         } else {
-            log.warn("이메일 찾기 실패: 이름={}, 전화번호={}", name, phone);
+            log.warn("이메일 찾기 실패: 이름={}, 전화번호(처리됨)={}", name, sanitizedPhone);
             return ResponseEntity.status(404).body("해당 정보를 가진 이메일을 찾을 수 없습니다.");
         }
     }
 
+    @PostMapping("/password-reset-request")
+    public ResponseEntity<String> requestPasswordReset(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String phone = request.get("phone");
+        log.info("비밀번호 재설정 인증 요청: email={}, phone={}", email, phone);
+
+        boolean isUserValid = authDao.verifyUser(email, phone);
+        if (isUserValid) {
+            return ResponseEntity.ok("사용자 인증 성공. 비밀번호 재설정 페이지로 이동하세요.");
+        } else {
+            return ResponseEntity.status(404).body("사용자 정보를 확인할 수 없습니다.");
+        }
+    }
+
+    @PostMapping("/password-reset")
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String newPassword = request.get("newPassword");
+        String confirmPassword = request.get("confirmPassword");
+
+        log.info("비밀번호 재설정 요청: email={}", email);
+
+        if (!newPassword.equals(confirmPassword)) {
+            log.warn("비밀번호 불일치: 새 비밀번호와 확인 비밀번호가 다릅니다.");
+            return ResponseEntity.badRequest().body("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+        }
+
+        boolean isReset = authDao.updatePasswordWithoutEncryption(email, newPassword);
+        if (isReset) {
+            log.info("비밀번호 재설정 성공: email={}", email);
+            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+        } else {
+            log.error("비밀번호 재설정 실패: email={}", email);
+            return ResponseEntity.status(500).body("비밀번호 변경 중 오류가 발생했습니다.");
+        }
+    }
 }
