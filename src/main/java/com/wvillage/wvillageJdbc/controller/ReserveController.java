@@ -49,10 +49,9 @@ public class ReserveController {
     // 예약 상태 : reserveState;
     // 새 메시지 여부 : reserveNewMsg;
     // 예약 취소/거절 이유 : reserveReason;
-
     // 예약하기
     @PostMapping("/reservation")
-    public ResponseEntity<ReserveVO> addReserve(@RequestBody ReserveVO reserveVO) {
+    public ResponseEntity<ReserveVO> insertReserve(@RequestBody ReserveVO reserveVO) {
         boolean isSuccess = reserveDAO.insertReserve(reserveVO);
         if (isSuccess) {
             return ResponseEntity.ok(reserveVO);
@@ -62,7 +61,7 @@ public class ReserveController {
 
     // 예약 승인
     @PostMapping("/reserveAccept")
-    public ResponseEntity<ReserveVO> addPositiveReserve(@RequestBody ReserveVO reserveVO) {
+    public ResponseEntity<ReserveVO> reserveAccept(@RequestBody ReserveVO reserveVO) {
         boolean isSuccess = reserveDAO.reserveAccept(reserveVO);
         if (isSuccess) {
             return ResponseEntity.ok(reserveVO);
@@ -70,6 +69,24 @@ public class ReserveController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    // 예약 거절/취소
+    // 예약 취소
+    @PostMapping("/reserveCancel")
+    public ResponseEntity<ReserveVO> reserveCancel(@RequestBody ReserveVO reserveVO) {
+        boolean isSuccess = reserveDAO.reserveCancel(reserveVO);
+        if (isSuccess) {
+            return ResponseEntity.ok(reserveVO);
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    // 예약 거절, 완료
+    @PostMapping("/reserveUpdate")
+    public ResponseEntity<ReserveVO> reserveDeny(@RequestBody ReserveVO reserveVO) {
+        boolean isSuccess = reserveDAO.reserveUpdate(reserveVO);
+        if (isSuccess) {
+            return ResponseEntity.ok(reserveVO);
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
 
 }

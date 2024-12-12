@@ -273,4 +273,18 @@ public class ReserveDAO extends BaseDAO {
     }
 
 
+    public boolean reserveUpdate(ReserveVO vo) {
+        String sql = """
+                UPDATE RESERVE SET RES_STATE = ?, RES_NEW_MSG = ? WHERE RES_ID = ?
+                """;
+
+        try{
+            int rows = jdbcTemplate.update(sql, vo.getReserveState(), 1, vo.getReserveId());
+            return rows > 0;
+        }catch(Exception e){
+            log.error(e.getMessage());
+            return false;
+        }
+    }
+
 }
