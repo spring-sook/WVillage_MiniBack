@@ -2,6 +2,7 @@ package com.wvillage.wvillageJdbc.vo;
 
 import lombok.*;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class PostVO {
     private String postId;
     private String postEmail;
     private String postCat;
-    private String postDate;
+    private OffsetDateTime postDate;
     private String postTitle;
     private String postContent;
     private List<String> postImg;
@@ -37,7 +38,7 @@ public class PostVO {
         this.postDisable = postDisable;
     }
 
-    public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail, int postViews, String postDate) {
+    public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail, int postViews, OffsetDateTime postDate) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postPrice = postPrice;

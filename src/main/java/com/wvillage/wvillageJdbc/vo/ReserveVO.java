@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -14,19 +15,19 @@ public class ReserveVO {
     private String reserveId;
     private String reservePost;
     private String reserveEmail;
-    private String reserveStart;
-    private String reserveEnd;
+    private OffsetDateTime reserveStart;
+    private OffsetDateTime reserveEnd;
     private int reserveTotalPrice;
     private String reserveState;
     private boolean reserveNewMsg;
     private String reserveReason; // 거부/취소 사유
 
-    public ReserveVO(String reserveStart, String reserveEnd) {
+    public ReserveVO(OffsetDateTime reserveStart, OffsetDateTime reserveEnd) {
         this.reserveStart = reserveStart;
         this.reserveEnd = reserveEnd;
     }
 
-    public ReserveVO(String reserveId, String reserveStart, String reserveEnd, String reserveState, String reserveReason) {
+    public ReserveVO(String reserveId, OffsetDateTime reserveStart, OffsetDateTime reserveEnd, String reserveState, String reserveReason) {
         this.reserveId = reserveId;
         this.reserveStart = reserveStart;
         this.reserveEnd = reserveEnd;

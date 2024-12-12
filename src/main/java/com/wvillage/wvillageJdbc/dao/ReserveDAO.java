@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -42,8 +43,8 @@ public class ReserveDAO extends BaseDAO {
         @Override
         public ReserveVO mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new ReserveVO(
-                    rs.getTimestamp("RES_START").toLocalDateTime().format(formatter),
-                    rs.getTimestamp("RES_END").toLocalDateTime().format(formatter)
+                    getOffsetDateTime(rs.getTimestamp("RES_START")),
+                    getOffsetDateTime(rs.getTimestamp("RES_END"))
             );
         }
     }
@@ -114,8 +115,8 @@ public class ReserveDAO extends BaseDAO {
                     ),
                     new ReserveVO(
                             rs.getString("RES_ID"),
-                            rs.getTimestamp("RES_START").toLocalDateTime().format(formatter),
-                            rs.getTimestamp("RES_END").toLocalDateTime().format(formatter),
+                            getOffsetDateTime(rs.getTimestamp("RES_START")),
+                            getOffsetDateTime(rs.getTimestamp("RES_END")),
                             rs.getString("RES_STATE"),
                             rs.getString("RES_REASON")
                     ),
@@ -192,8 +193,8 @@ public class ReserveDAO extends BaseDAO {
                     ),
                     new ReserveVO(
                             rs.getString("RES_ID"),
-                            rs.getTimestamp("RES_START").toLocalDateTime().format(formatter),
-                            rs.getTimestamp("RES_END").toLocalDateTime().format(formatter),
+                            getOffsetDateTime(rs.getTimestamp("RES_START")),
+                            getOffsetDateTime(rs.getTimestamp("RES_END")),
                             rs.getString("RES_STATE"),
                             rs.getString("RES_REASON")
                     ),

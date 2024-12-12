@@ -9,6 +9,9 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -62,7 +65,7 @@ public class BaseDAO {
         String sql = "SELECT TAG_ID, TAG_CONTENT FROM REVIEW_TAG";
         Map<String, String> tagsMap = new HashMap<>();
 
-        if(tags == null) {
+        if (tags == null) {
             return null;
         }
 
@@ -100,29 +103,7 @@ public class BaseDAO {
         }
     }
 
-//    public List<String> searchRegion(String regionCode) {
-//        String sidoSql = "SELECT REGION_CODE, REGION_SIDO FROM REGION WHERE REGION_CODE LIKE '?%'";
-//        String sigunSql = "SELECT REGION_CODE, REGION_SIGUN FROM REGION WHERE REGION_CODE LIKE '?%'";
-//        String guSql = "SELECT REGION_CODE, REGION_GU FROM REGION WHERE REGION_CODE LIKE '?%'";
-//        String emdSql = "SELECT REGION_CODE, REGION_EMD FROM REGION WHERE REGION_CODE LIKE '?%'";
-//        String riSql = "SELECT REGION_CODE, REGION_RI FROM REGION WHERE REGION_CODE LIKE '?%'";
-//
-//        try{
-//
-//        } catch (RuntimeException e) {
-//            log.error(e.getMessage());
-//        }
-//    }
-
-//    private static String isEmpty(List<RegionVO> lst) {
-//        for(RegionVO vo : lst) {
-//            if(vo.getRegionSigun() != null) {
-//                return "sigun";
-//            } else if(vo.getRegionGu() != null) {
-//                return "gu";
-//            }else if(vo.getRegionEmd() != null) {
-//                return "emd";
-//            }
-//        }
-//    }
+    public static OffsetDateTime getOffsetDateTime(Timestamp time) {
+        return time.toInstant().atZone(ZoneId.of("Asia/Seoul")).toOffsetDateTime();
+    }
 }

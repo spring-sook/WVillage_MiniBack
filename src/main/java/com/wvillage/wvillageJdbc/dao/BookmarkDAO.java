@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
@@ -103,7 +104,7 @@ public class BookmarkDAO extends BaseDAO {
                     rs.getString("POST_REGION"),
                     rs.getString("IMG_URL"),
                     rs.getInt("POST_VIEW"),
-                    rs.getTimestamp("POST_DATE").toLocalDateTime().format(formatter)
+                    getOffsetDateTime(rs.getTimestamp("POST_DATE"))
             );
         }
     }
