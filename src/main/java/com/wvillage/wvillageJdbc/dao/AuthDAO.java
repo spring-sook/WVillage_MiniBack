@@ -25,7 +25,7 @@ public class AuthDAO {
     }
 
 
-    private static final String LOGIN = "SELECT EMAIL, NAME, NICKNAME, SCORE, PROFILE_IMG, AREA_CODE, GRADE, POINT " +
+    private static final String LOGIN = "SELECT EMAIL, NAME, NICKNAME, PHONE, SCORE, PROFILE_IMG, AREA_CODE, GRADE, POINT " +
             "FROM MEMBER WHERE EMAIL = ? AND PASSWORD = ?";
 
 
@@ -69,6 +69,7 @@ public class AuthDAO {
                     rs.getString("EMAIL"),
                     rs.getString("NAME"),
                     rs.getString("NICKNAME"),
+                    rs.getString("PHONE"),
                     rs.getInt("SCORE"),
                     rs.getString("PROFILE_IMG"),
                     rs.getString("AREA_CODE"),

@@ -34,10 +34,11 @@ public class MemberVO {
         this.reportCount = reportCount;
     }
 
-    public MemberVO(String email, String name, String nickname, int score, String profileImg, String areaCode, String grade, int point) {
+    public MemberVO(String email, String name, String nickname, String phone, int score, String profileImg, String areaCode, String grade, int point) {
         this.email = email;
         this.name = name;
         this.nickname = nickname;
+        this.phone = phone;
         this.score = score;
         this.profileImg = profileImg;
         this.areaCode = areaCode;
