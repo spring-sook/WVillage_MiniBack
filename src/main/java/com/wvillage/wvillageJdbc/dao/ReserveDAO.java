@@ -14,10 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Repository
@@ -212,17 +214,26 @@ public class ReserveDAO extends BaseDAO {
     // 새 예약 등록
     public boolean insertReserve(ReserveVO vo) {
         String sql = """
-                INSERT INTO RESERVE (RES_POST, RES_EMAIL ,RES_START, RES_END)
-                VALUES (?,?,?,?);
+                INSERT INTO RESERVE (RES_POST, RES_EMAIL, RES_START, RES_END)
+                VALUES (?, ?, ?, ?)
                 """;
         try {
-            LocalDateTime startLocalDateTime = vo.getReserveStart().atZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
-            LocalDateTime endLocalDateTime = vo.getReserveEnd().atZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+            // ZonedDateTime 또는 Instant를 사용하는 경우
+            // 특정 시점의 시간을 UTC(Coordinated Universal Time)로 나타내는 객체
+            Instant startInstant = vo.getReserveStart().toInstant(); // ZonedDateTime인 경우
+            Instant endInstant = vo.getReserveEnd().toInstant(); // ZonedDateTime인 경우
 
-            int rows = jdbcTemplate.update(sql, vo.getReservePost(), vo.getReserveEmail(), startLocalDateTime, endLocalDateTime);
+            Timestamp startTimestamp = Timestamp.from(startInstant);
+            Timestamp endTimestamp = Timestamp.from(endInstant);
+
+
+            int rows = jdbcTemplate.update(sql, vo.getReservePost(), vo.getReserveEmail(), startTimestamp, endTimestamp);
             return rows > 0;
+        } catch (DateTimeParseException e) {
+            log.error("날짜 형식이 잘못되었습니다: {}", e.getMessage());
+            return false;
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("예약 등록 실패: {}", e.getMessage());
             return false;
         }
     }
