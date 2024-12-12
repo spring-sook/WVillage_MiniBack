@@ -44,7 +44,7 @@ public class RegionDAO {
     // 시도 이름 리스트
     public List<RegionVO> filterSido() {
         String sql = """
-                SELECT MIN(REGION_CODE) AS RE_CODE, REGION_SIDO
+                SELECT MIN(REGION_CODE) AS REGION_CODE, REGION_SIDO
                 FROM REGION
                 GROUP BY REGION_SIDO
                 """;
