@@ -59,6 +59,10 @@ public class BaseDAO {
         String sql = "SELECT TAG_ID, TAG_CONTENT FROM REVIEW_TAG";
         Map<String, String> tagsMap = new HashMap<>();
 
+        if(tags == null) {
+            return null;
+        }
+
         try {
             List<ReviewVO> revList = jdbcTemplate.query(sql, new tagsContentRowMapper());
             for (ReviewVO review : revList) {
