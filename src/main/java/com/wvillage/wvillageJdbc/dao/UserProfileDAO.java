@@ -47,7 +47,7 @@ public class UserProfileDAO extends BaseDAO {
                 SELECT EMAIL, NICKNAME, PROFILE_IMG, AREA_CODE, SCORE
                 FROM MEMBER
                 WHERE EMAIL = (SELECT POST_EMAIL
-                FROM MEMBER
+                FROM POST
                 WHERE POST_ID = ?)
                 """;
         try {
