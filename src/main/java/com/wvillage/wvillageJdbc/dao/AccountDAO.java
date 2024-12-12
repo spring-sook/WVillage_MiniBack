@@ -62,7 +62,7 @@ public class AccountDAO {
     }
 
     //계좌 삭제
-    public boolean deleteAccount(int accountNo, String accountBank) {
+    public boolean deleteAccount(String accountNo, String accountBank) {
         try {
             int result = jdbcTemplate.update(
                     DELETE_ACCOUNT,

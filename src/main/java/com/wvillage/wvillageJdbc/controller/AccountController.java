@@ -43,7 +43,7 @@ public ResponseEntity<Boolean> addAccount(@RequestBody AccountVO accountVO) {
     //    계좌 삭제
     @DeleteMapping("/delete")
     public ResponseEntity<Boolean> deleteAccount(
-            @RequestParam int accountNo,
+            @RequestParam String accountNo,
             @RequestParam String accountBank) {
         boolean isSuccess = accountDao.deleteAccount(accountNo, accountBank);
         if (isSuccess) {
