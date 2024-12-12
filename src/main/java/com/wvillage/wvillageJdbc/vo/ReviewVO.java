@@ -44,5 +44,10 @@ public class ReviewVO {
         this.reviewContent = reviewContent;
     }
 
+    public ReviewVO(String reviewId, List<String> reviewTagContent){
+        this.reviewId = reviewId;
+        this.reviewTagContent = reviewTagContent;
+    }
+
 
 }
