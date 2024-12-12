@@ -32,4 +32,10 @@ public class UserProfileController {
         MemberVO memberVo = userProfileDAO.getAddr(email);
         return ResponseEntity.ok(memberVo);
     }
+
+    @GetMapping("/post/{postId}")
+    public ResponseEntity<MemberVO> getPostUserProfile(@PathVariable String postId) {
+        MemberVO memberVO = userProfileDAO.getPostedUserProfile(postId);
+        return ResponseEntity.ok(memberVO);
+    }
 }
