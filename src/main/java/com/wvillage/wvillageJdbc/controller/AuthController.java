@@ -46,4 +46,22 @@ public class AuthController {
             return ResponseEntity.status(400).body("회원가입 중 오류가 발생했습니다.");
         }
     }
+
+    @GetMapping("/find-email")
+    public ResponseEntity<String> findEmail(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "phone", required = false) String phone
+    ) {
+        log.info("이메일 찾기 요청: 이름={}, 전화번호={}", name, phone);
+        String email = authDao.findEmailByNameAndPhone(name, phone);
+
+        if (email != null) {
+            log.info("이메일 찾기 성공: {}", email);
+            return ResponseEntity.ok(email);
+        } else {
+            log.warn("이메일 찾기 실패: 이름={}, 전화번호={}", name, phone);
+            return ResponseEntity.status(404).body("해당 정보를 가진 이메일을 찾을 수 없습니다.");
+        }
+    }
+
 }

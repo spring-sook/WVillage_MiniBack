@@ -57,6 +57,8 @@ public class AuthDAO {
         }
     }
 
+
+
     private static class LoginInfoRowMapper implements RowMapper<MemberVO> {
         @Override
         public MemberVO mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -70,6 +72,16 @@ public class AuthDAO {
                     rs.getString("GRADE"),
                     rs.getInt("POINT")
             );
+        }
+    }
+
+    public String findEmailByNameAndPhone(String name, String phone) {
+        String query = "SELECT EMAIL FROM MEMBER WHERE NAME = ? AND PHONE = ?";
+        try {
+            return jdbcTemplate.queryForObject(query, new Object[]{name, phone}, String.class);
+        } catch (DataAccessException e) {
+            log.error("이메일 찾기 실패: 이름={}, 전화번호={}", name, phone, e);
+            return null;
         }
     }
 }
