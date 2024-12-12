@@ -65,10 +65,10 @@ public class PostDAO extends BaseDAO {
                        POST_DEAL, POST_VIEW,
                        POST_PRICE, POST_CONTENT,
                        POST_LOCATION, POST_REGION,
-                       POST_DISABLED
+                       POST_DISABLED, POST_EMAIL
                 FROM BOOKMARK B
                          RIGHT JOIN (SELECT * FROM POST WHERE POST_ID = ?) P ON P.POST_ID = B.BK_POST
-                GROUP BY POST_ID, POST_TITLE, POST_VIEW, POST_PRICE, POST_CONTENT, POST_LOCATION, POST_REGION, POST_DEAL, POST_DISABLED
+                GROUP BY POST_ID, POST_TITLE, POST_VIEW, POST_PRICE, POST_CONTENT, POST_LOCATION, POST_REGION, POST_DEAL, POST_DISABLED, POST_EMAIL
                 """;
 
         try {
@@ -108,7 +108,8 @@ public class PostDAO extends BaseDAO {
                     rs.getString("POST_REGION"),
                     rs.getString("POST_LOCATION"),
                     rs.getString("POST_CONTENT"),
-                    rs.getBoolean("POST_DISABLED")
+                    rs.getBoolean("POST_DISABLED"),
+                    rs.getString("POST_EMAIL")
             );
         }
     }
