@@ -40,6 +40,16 @@ public class ReserveController {
         return ResponseEntity.ok(list);
     }
 
+    // 예약 ID = reserveId;
+    // 게시글 ID : reservePost;
+    // 예약자 : reserveEmail;
+    // 예약 시작 시간 : reserveStart;
+    // 예약 종료 시간 : reserveEnd;
+    // 총 지불 금액 : reserveTotalPrice;
+    // 예약 상태 : reserveState;
+    // 새 메시지 여부 : reserveNewMsg;
+    // 예약 취소/거절 이유 : reserveReason;
+
     // 예약하기
     @PostMapping("/reservation")
     public ResponseEntity<ReserveVO> addReserve(@RequestBody ReserveVO reserveVO) {
@@ -49,4 +59,16 @@ public class ReserveController {
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+
+    // 예약 승인 or 완료
+    @PostMapping("/positiveReserve")
+    public ResponseEntity<ReserveVO> addPositiveReserve(@RequestBody ReserveVO reserveVO) {
+        boolean isSuccess = reserveDAO.reservePositive(reserveVO);
+        if (isSuccess) {
+            return ResponseEntity.ok(reserveVO);
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    // 예약 거절/취소
 }

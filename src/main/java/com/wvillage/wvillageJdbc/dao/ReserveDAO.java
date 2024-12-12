@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -202,12 +203,13 @@ public class ReserveDAO extends BaseDAO {
         }
     }
 
+    // 새 예약 등록
     public boolean insertReserve(ReserveVO vo) {
         String sql = """
                 INSERT INTO RESERVE (RES_POST, RES_EMAIL ,RES_START, RES_END)
                 VALUES (?,?,?,?);
                 """;
-        try{
+        try {
             int rows = jdbcTemplate.update(sql, vo.getReservePost(), vo.getReserveEmail(), vo.getReserveStart(), vo.getReserveEnd());
             return rows > 0;
         } catch (Exception e) {
@@ -215,6 +217,45 @@ public class ReserveDAO extends BaseDAO {
             return false;
         }
     }
+
+    // 예약 승인 혹은 완료
+    @Transactional
+    public boolean reservePositive(ReserveVO vo) {
+        String updateReserve = """
+                UPDATE RESERVE
+                SET RES_STATE = ?, RES_NEW_MSG = ?
+                WHERE RES_ID = ?
+                """;
+
+        String updateOwner = """
+                UPDATE MEMBER
+                SET POINT = POINT - ?
+                WHERE EMAIL = (SELECT EMAIL
+                FROM POST
+                WHERE POST_ID = ?)
+                """;
+
+        String updateCustomer = """
+                UPDATE MEMBER
+                SET POINT = POINT + ?
+                WHERE EMAIL = ?
+                """;
+
+        try {
+            int rows = jdbcTemplate.update(updateReserve, vo.getReserveState(), 1, vo.getReserveId());
+            rows += jdbcTemplate.update(updateOwner, vo.getReserveTotalPrice(), vo.getReservePost());
+            rows += jdbcTemplate.update(updateCustomer, vo.getReserveTotalPrice(), vo.getReserveEmail());
+            return rows > 0;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return false;
+        }
+    }
+
+    // 예약 거절/취소
+//    public boolean reserveNegative(ReserveVO vo) {
+//        String sql-
+//    }
 
 
 }

@@ -3,7 +3,6 @@ package com.wvillage.wvillageJdbc.vo;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -16,8 +15,9 @@ public class ReserveVO {
     private String reserveEmail;
     private LocalDateTime reserveStart;
     private LocalDateTime reserveEnd;
+    private int reserveTotalPrice;
     private String reserveState;
-    private boolean reserveMagRead;
+    private boolean reserveNewMsg;
     private String reserveReason; // 거부/취소 사유
 
     public ReserveVO(LocalDateTime reserveStart, LocalDateTime reserveEnd) {
