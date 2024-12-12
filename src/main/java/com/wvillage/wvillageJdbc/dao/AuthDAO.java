@@ -1,10 +1,7 @@
 package com.wvillage.wvillageJdbc.dao;
 
 import com.wvillage.wvillageJdbc.vo.MemberVO;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,12 +12,22 @@ import java.sql.SQLException;
 
 @Repository
 @Slf4j
-@RequiredArgsConstructor
 public class AuthDAO {
-    @Autowired
+
     private final JdbcTemplate jdbcTemplate;
+
+    public AuthDAO(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+
     private static final String LOGIN = "SELECT EMAIL, NAME, NICKNAME, SCORE, PROFILE_IMG, AREA_CODE, GRADE, POINT " +
-                                        "FROM MEMBER WHERE EMAIL = ? AND PASSWORD = ? ";
+            "FROM MEMBER WHERE EMAIL = ? AND PASSWORD = ?";
+
+
+    private static final String SIGNUP = "INSERT INTO MEMBER (EMAIL, PASSWORD, NAME, NICKNAME, PHONE, AREA_CODE, GRADE) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
 
     public MemberVO login(String email, String password) {
         try {
@@ -28,6 +35,25 @@ public class AuthDAO {
         } catch (DataAccessException e) {
             log.error("로그인 실패 중 오류 발생", e);
             return null;
+        }
+    }
+
+
+    public boolean signup(MemberVO member) {
+        try {
+            jdbcTemplate.update(SIGNUP,
+                    member.getEmail(),
+                    member.getPassword(),
+                    member.getName(),
+                    member.getNickname(),
+                    member.getPhone(),
+                    member.getAreaCode(),
+                    member.getGrade()
+            );
+            return true;
+        } catch (DataAccessException e) {
+            log.error("회원가입 중 오류 발생", e);
+            return false;
         }
     }
 
@@ -47,3 +73,4 @@ public class AuthDAO {
         }
     }
 }
+
