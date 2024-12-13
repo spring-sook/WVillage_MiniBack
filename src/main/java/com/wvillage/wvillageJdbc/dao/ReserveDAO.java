@@ -110,7 +110,7 @@ public class ReserveDAO extends BaseDAO {
                             rs.getString("POST_ID"),
                             rs.getString("POST_TITLE"),
                             rs.getInt("POST_PRICE"),
-                            rs.getString("POST_REGION"),
+                            getRegionName(rs.getString("POST_REGION")),
                             rs.getString("POST_LOCATION"),
                             rs.getString("IMG_URL")
                     ),
@@ -181,7 +181,7 @@ public class ReserveDAO extends BaseDAO {
                     new PostVO(
                             rs.getString("POST_ID"),
                             rs.getString("POST_TITLE"),
-                            rs.getString("POST_REGION"),
+                            getRegionName(rs.getString("POST_REGION")),
                             rs.getString("POST_LOCATION"),
                             rs.getString("IMG_URL")
                     ),

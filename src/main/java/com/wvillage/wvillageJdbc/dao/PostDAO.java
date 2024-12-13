@@ -93,7 +93,7 @@ public class PostDAO extends BaseDAO {
 
 
     // 상세 내용 RowMapper
-    private static class DeatailRowMapper implements RowMapper<PostVO> {
+    private class DeatailRowMapper implements RowMapper<PostVO> {
 
         @Override
         public PostVO mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -104,7 +104,7 @@ public class PostDAO extends BaseDAO {
                     rs.getInt("POST_PRICE"),
                     rs.getInt("POST_DEAL"),
                     rs.getInt("POST_BK"),
-                    rs.getString("POST_REGION"),
+                    getRegionName(rs.getString("POST_REGION")),
                     rs.getString("POST_LOCATION"),
                     rs.getString("POST_CONTENT"),
                     rs.getBoolean("POST_DISABLED"),
