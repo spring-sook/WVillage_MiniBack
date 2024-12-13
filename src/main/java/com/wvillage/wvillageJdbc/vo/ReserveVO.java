@@ -19,7 +19,8 @@ public class ReserveVO {
     private OffsetDateTime reserveEnd;
     private int reserveTotalPrice;
     private String reserveState;
-    private boolean reserveNewMsg;
+    private int reserveMsgLent;
+    private int reserveMsgLented;
     private String reserveReason; // 거부/취소 사유
 
     public ReserveVO(OffsetDateTime reserveStart, OffsetDateTime reserveEnd) {
@@ -33,5 +34,11 @@ public class ReserveVO {
         this.reserveEnd = reserveEnd;
         this.reserveState = reserveState;
         this.reserveReason = reserveReason;
+    }
+
+    public ReserveVO(String reserveEmail ,int reserveMsgLent, int reserveMsgLented){
+        this.reserveEmail = reserveEmail;
+        this.reserveMsgLent = reserveMsgLent;
+        this.reserveMsgLented = reserveMsgLented;
     }
 }

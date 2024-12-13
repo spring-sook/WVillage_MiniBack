@@ -2,6 +2,7 @@ package com.wvillage.wvillageJdbc.dao;
 
 
 import com.wvillage.wvillageJdbc.vo.MemberVO;
+import com.wvillage.wvillageJdbc.vo.ReserveVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 @Repository
 @Slf4j
@@ -21,7 +23,7 @@ public class UserProfileDAO extends BaseDAO {
     private final JdbcTemplate jdbcTemplate;
     private static final String GET_ADDR = "SELECT EMAIL, AREA_CODE FROM MEMBER WHERE EMAIL = ? ";
 
-    // 타 유저 프로필 페이지의 정보 불러오기
+    // 유저 프로필 페이지의 정보 불러오기
     public MemberVO getUserProfile(String email) {
         String sql = """
                 SELECT EMAIL, NICKNAME, PROFILE_IMG, SCORE, COUNT(*) AS REPORT_COUNT
@@ -101,6 +103,41 @@ public class UserProfileDAO extends BaseDAO {
             member.setEmail(rs.getString("EMAIL"));
             member.setAreaCode(rs.getString("AREA_CODE"));
             return member;
+        }
+    }
+
+    // 읽지 않은 알림
+    public ReserveVO getNewMsg(String email) {
+        String sql = """
+                SELET
+                    SUM(CASE WHEN R.RES_MSG_LENT = 1 AND P.POST_EMAIL = ? THEN 1 ELSE 0 END) AS LENT_MSG,
+                    SUM(CASE WHEN R.RES_MSG_LENTED = 1 AND R.RES_EMAIL = ? THEN 1 ELSE 0 END) AS LENTED_MSG
+                FROM RESERVE R
+                LEFT JOIN POST P ON R.RES_POST = P.POST_ID;
+                """;
+
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{email}, new newMsgRowMapper(email));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+
+    private static class newMsgRowMapper implements RowMapper<ReserveVO> {
+        private final String email;
+
+        public newMsgRowMapper(String email) {
+            this.email = email;
+        }
+
+        @Override
+        public ReserveVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new ReserveVO(
+                    rs.getString(email),
+                    rs.getInt("LENT_MSG"),
+                    rs.getInt("LENTED_MSG")
+            );
         }
     }
 }

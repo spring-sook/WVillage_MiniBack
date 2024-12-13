@@ -3,6 +3,7 @@ package com.wvillage.wvillageJdbc.controller;
 import com.wvillage.wvillageJdbc.dao.ReviewDAO;
 import com.wvillage.wvillageJdbc.dao.UserProfileDAO;
 import com.wvillage.wvillageJdbc.vo.MemberVO;
+import com.wvillage.wvillageJdbc.vo.ReserveVO;
 import com.wvillage.wvillageJdbc.vo.ReviewVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +34,17 @@ public class UserProfileController {
         return ResponseEntity.ok(memberVo);
     }
 
+    // 게시글 작성자 정보
     @GetMapping("/post/{postId}")
     public ResponseEntity<MemberVO> getPostUserProfile(@PathVariable String postId) {
         MemberVO memberVO = userProfileDAO.getPostedUserProfile(postId);
         return ResponseEntity.ok(memberVO);
+    }
+
+    // 새로운 알림 개수
+    @GetMapping("/reserveMsg")
+    public ResponseEntity<ReserveVO> getReserveMsg(@RequestParam String email) {
+        ReserveVO reserveVO = userProfileDAO.getNewMsg(email);
+        return ResponseEntity.ok(reserveVO);
     }
 }
