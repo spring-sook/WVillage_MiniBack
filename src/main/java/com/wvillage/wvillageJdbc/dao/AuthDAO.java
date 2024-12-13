@@ -51,7 +51,7 @@ public class AuthDAO {
                     member.getNickname(),
                     member.getPhone(),
                     member.getAreaCode(),
-                    member.getGrade());
+                    "user");
             return true;
         } catch (DataAccessException e) {
             log.error("회원가입 중 오류 발생", e);
@@ -129,6 +129,7 @@ public class AuthDAO {
             return false;
         }
     }
+
 };
 
 
