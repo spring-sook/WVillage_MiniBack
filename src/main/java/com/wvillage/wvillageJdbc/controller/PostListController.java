@@ -24,18 +24,12 @@ public class PostListController {
         return ResponseEntity.ok(lst);
     }
 
-    // 일반 전체
-    @GetMapping("/commonAllList/{region}")
-    public ResponseEntity<List<PostVO>> commonAllList(@PathVariable String region) {
-        List<PostVO> lst = postListDAO.getCommonAllPostList(region);
-        return ResponseEntity.ok(lst);
-    }
-
-    // 일반 카테고리별
-    @GetMapping("/commonCategoryList")
-    public ResponseEntity<List<PostVO>> commonCategoryList(@RequestParam String region,
-                                                           @RequestParam String category) {
-        List<PostVO> lst = postListDAO.getCommonCategoryPostList(region, category);
+    // 검색기능 통합
+    @GetMapping("/postList")
+    public ResponseEntity<List<PostVO>> getPostList(@RequestParam String region,
+                                                    @RequestParam(required = false) String category,
+                                                    @RequestParam(required = false) String keyword ) {
+        List<PostVO> lst = postListDAO.getPostList(region, category, keyword);
         return ResponseEntity.ok(lst);
     }
 
@@ -46,12 +40,6 @@ public class PostListController {
         return ResponseEntity.ok(lst);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<PostVO>> search(@RequestParam String region,
-                                               @RequestParam String keyword) {
-        List<PostVO> lst = postListDAO.searchPostList(region, keyword);
-        return ResponseEntity.ok(lst);
-    }
 
 }
 
