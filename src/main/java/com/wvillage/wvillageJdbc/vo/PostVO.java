@@ -50,11 +50,12 @@ public class PostVO {
 
 
     // 내가 예약한 예약 게시글 목록
-    public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail) {
+    public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postLocation,String postThumbnail) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postPrice = postPrice;
         this.postRegion = postRegion;
+        this.postLocation = postLocation;
         this.postThumbnail = postThumbnail;
     }
 
