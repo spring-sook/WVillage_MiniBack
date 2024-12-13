@@ -15,12 +15,12 @@ public class ReportVO {
     private String reportContent;
     private OffsetDateTime reportDate;
     private String reportState;
-    private String reporter;
+    private String reporterEmail;
     private String reporterNickName;
-    private String reporterImg;
+    private String reporterProfileImg;
     private int reporterCount;
-    private String reported;
+    private String reportedEmail;
     private String reportedNickName;
-    private String reportedImg;
+    private String reportedProfileImg;
     private int reportedCount;
 }

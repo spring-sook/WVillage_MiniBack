@@ -38,6 +38,7 @@ public class ReportController {
     @PostMapping("/updateReport")
     public ResponseEntity<Boolean> updateReport(@RequestBody ReportVO reportVO) {
         boolean status = reportDAO.updateReport(reportVO);
+        log.warn(String.valueOf(status));
         return ResponseEntity.ok(status);
     }
 }

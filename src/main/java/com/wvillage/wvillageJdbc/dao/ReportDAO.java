@@ -34,18 +34,18 @@ public class ReportDAO extends BaseDAO {
                     reporter.NICKNAME AS REPORTER_NICKNAME,
                     reporter.EMAIL AS REPORTER_EMAIL,
                     reporter.PROFILE_IMG AS REPORTER_PROFILE_IMG,
-                    SUM(CASE WHEN r.REPORT_STATE = 'accept' THEN 1 ELSE 0 END) OVER ( PARTITION BY r.REPORT_REPORTED) AS ACCEPTED_REPORTED_COUNT,
-                    COUNT(r.REPORT_REPORTER) OVER (PARTITION BY r.REPORT_REPORTER) AS TOTAL_REPORTER_COUNT
+                    SUM(CASE WHEN r.REPORT_STATE = 'accept' THEN 1 ELSE 0 END) OVER ( PARTITION BY r.REPORT_REPORTED) AS REPORTED_COUNT,
+                    COUNT(r.REPORT_REPORTER) OVER (PARTITION BY r.REPORT_REPORTER) AS REPORTER_COUNT
                 FROM REPORT r
                 LEFT JOIN MEMBER reported ON r.REPORT_REPORTED = reported.EMAIL
                 LEFT JOIN MEMBER reporter ON r.REPORT_REPORTER = reporter.EMAIL
                 ORDER BY
-                    CASE NVL(r.REPORT_STATE, 'else')
-                        WHEN 'wait' THEN 1
-                        WHEN 'accept' THEN 2
-                        WHEN 'deny' THEN 3
-                        ELSE 4
-                    END;
+                    CASE
+                       WHEN r.REPORT_STATE = 'wait' THEN 1
+                       WHEN r.REPORT_STATE = 'accept' THEN 2
+                       WHEN r.REPORT_STATE = 'deny' THEN 3
+                       ELSE 4
+                    END
                 """;
 
         try {
@@ -68,11 +68,11 @@ public class ReportDAO extends BaseDAO {
                     rs.getString("REPORTER_EMAIL"),
                     rs.getString("REPORTER_NICKNAME"),
                     rs.getString("REPORTER_PROFILE_IMG"),
-                    rs.getInt("TOTAL_REPORTER_COUNT"),
+                    rs.getInt("REPORTER_COUNT"),
                     rs.getString("REPORTED_EMAIL"),
                     rs.getString("REPORTED_NICKNAME"),
                     rs.getString("REPORTED_PROFILE_IMG"),
-                    rs.getInt("TOTAL_REPORTED_COUNT")
+                    rs.getInt("REPORTED_COUNT")
             );
         }
     }
@@ -84,7 +84,7 @@ public class ReportDAO extends BaseDAO {
                 """;
 
         try {
-            int row = jdbcTemplate.update(sql, report.getReporter(), report.getReported(), report.getReportContent());
+            int row = jdbcTemplate.update(sql, report.getReporterEmail(), report.getReportedEmail(), report.getReportContent());
             return row > 0;
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -116,9 +116,9 @@ public class ReportDAO extends BaseDAO {
             int row = 0;
             if (vo.getReportState().equals("accept")) {
                 row += jdbcTemplate.update(approve, vo.getReportId());
-                row += jdbcTemplate.update(score, vo.getReported());
+                row += jdbcTemplate.update(score, vo.getReportedEmail());
             } else {
-                row += jdbcTemplate.update(deny, vo.getReported());
+                row += jdbcTemplate.update(deny, vo.getReportId());
             }
 
             return row > 0;
