@@ -6,6 +6,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -44,6 +45,7 @@ public class AuthDAO {
     public boolean signup(MemberVO member) {
         try {
             String sql = "INSERT INTO member (email, password, name, nickname, phone, area_code, grade) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
             jdbcTemplate.update(sql,
                     member.getEmail(),
                     member.getPassword(),
@@ -52,6 +54,20 @@ public class AuthDAO {
                     member.getPhone(),
                     member.getAreaCode(),
                     "user");
+
+            String reviewCount = """
+                    BEGIN
+                        FOR i IN 0..20
+                            LOOP
+                                INSERT INTO REVIEW_RECORD (REC_EMAIL, REC_REVIEW)
+                                VALUES (?, ? || i);
+                            end loop;
+                        COMMIT;
+                    end;
+                    """;
+
+            jdbcTemplate.update(reviewCount, member.getEmail(), "TAG_");
+
             return true;
         } catch (DataAccessException e) {
             log.error("회원가입 중 오류 발생", e);
