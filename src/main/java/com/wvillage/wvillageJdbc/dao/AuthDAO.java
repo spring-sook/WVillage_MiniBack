@@ -8,9 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 @Repository
@@ -45,15 +43,15 @@ public class AuthDAO {
 
     public boolean signup(MemberVO member) {
         try {
-            jdbcTemplate.update(SIGNUP,
+            String sql = "INSERT INTO member (email, password, name, nickname, phone, area_code, grade) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            jdbcTemplate.update(sql,
                     member.getEmail(),
                     member.getPassword(),
                     member.getName(),
                     member.getNickname(),
                     member.getPhone(),
                     member.getAreaCode(),
-                    member.getGrade()
-            );
+                    member.getGrade());
             return true;
         } catch (DataAccessException e) {
             log.error("회원가입 중 오류 발생", e);
@@ -90,24 +88,44 @@ public class AuthDAO {
     }
 
     public boolean verifyUser(String email, String phone) {
-        String query = "SELECT COUNT(*) FROM MEMBER WHERE EMAIL = ? AND PHONE = ?";
+        String sql = "SELECT COUNT(*) FROM member WHERE email = ? AND phone = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email, phone);
+        return count != null && count > 0;
+    }
+
+    public boolean updatePasswordWithoutEncryption(String email, String newPassword) {
+        String sql = "UPDATE member SET password = ? WHERE email = ?";
         try {
-            Integer count = jdbcTemplate.queryForObject(query, new Object[]{email, phone}, Integer.class);
-            return count != null && count > 0;
+            int rowsUpdated = jdbcTemplate.update(sql, newPassword, email);
+            log.info("비밀번호 업데이트: rowsUpdated={}", rowsUpdated);
+            return rowsUpdated > 0;
         } catch (DataAccessException e) {
-            log.error("사용자 인증 실패: email={}, phone={}", email, phone, e);
+            log.error("비밀번호 업데이트 실패: email={}", email, e);
             return false;
         }
     }
 
-    public boolean updatePasswordWithoutEncryption(String email, String newPassword) {
-        String query = "UPDATE MEMBER SET PASSWORD = ? WHERE EMAIL = ?";
+
+    public boolean updateMemberInfo(MemberVO memberVo) {
+        String sql = "UPDATE member SET " +
+                "name = ?, " +
+                "nickname = ?, " +
+                "password = ?, " +
+                "phone = ?, " +
+                "area_code = ? " +
+                "WHERE email = ?";
+
         try {
-            log.info("비밀번호 업데이트 실행: email={}, newPassword={}", email, newPassword);
-            int rowsAffected = jdbcTemplate.update(query, newPassword, email);
-            return rowsAffected > 0;
+            jdbcTemplate.update(sql,
+                    memberVo.getName(),
+                    memberVo.getNickname(),
+                    memberVo.getPassword(),
+                    memberVo.getPhone(),
+                    memberVo.getAreaCode(),
+                    memberVo.getEmail());
+            return true;
         } catch (DataAccessException e) {
-            log.error("비밀번호 업데이트 실패: email={}, error={}", email, e.getMessage());
+            log.error("회원정보 수정 중 오류 발생", e);
             return false;
         }
     }
