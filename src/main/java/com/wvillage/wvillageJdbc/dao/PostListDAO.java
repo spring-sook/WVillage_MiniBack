@@ -29,7 +29,8 @@ public class PostListDAO extends BaseDAO {
                        P.POST_PRICE,
                        P.POST_REGION,
                        I.IMG_URL,
-                       P.POST_DISABLED
+                       P.POST_DISABLED,
+                       P.POST_LOCATION
                 FROM (SELECT IMG_POST, IMG_URL
                   FROM POST_IMG
                   WHERE IMG_ID IN (SELECT IMG_ID
@@ -42,7 +43,8 @@ public class PostListDAO extends BaseDAO {
                                       POST_TITLE,
                                       POST_PRICE,
                                       POST_REGION,
-                                      POST_DISABLED
+                                      POST_DISABLED,
+                                      POST_LOCATION
                                FROM POST
                                WHERE POST_EMAIL = ?) P
                               ON P.POST_ID = I.IMG_POST""";
@@ -53,21 +55,6 @@ public class PostListDAO extends BaseDAO {
             return null;
         }
     }
-
-    private static class UserPostlistRowMapper implements RowMapper<PostVO> {
-        @Override
-        public PostVO mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new PostVO(
-                    rs.getString("POST_ID"),
-                    rs.getString("POST_TITLE"),
-                    rs.getInt("POST_PRICE"),
-                    rs.getString("POST_REGION"),
-                    rs.getString("IMG_URL"),
-                    rs.getBoolean("POST_DISABLED")
-            );
-        }
-    }
-
 
     // 검색어
     public List<PostVO> getPostList(String region, String category, String keyword) {
@@ -94,29 +81,85 @@ public class PostListDAO extends BaseDAO {
         }
 
         String sql = """
-            SELECT P.POST_ID,
-                   P.POST_TITLE,
-                   P.POST_PRICE,
-                   P.POST_REGION,
-                   I.IMG_URL,
-                   P.POST_VIEW,
-                   P.POST_DATE
-            FROM (SELECT IMG_POST, IMG_URL
-                  FROM POST_IMG
-                  WHERE IMG_ID IN (SELECT IMG_ID
-                                   FROM (SELECT IMG_ID,
-                                                ROW_NUMBER() OVER (PARTITION BY IMG_POST ORDER BY SUBSTR(IMG_ID, 5) + 0) AS rn
-                                         FROM POST_IMG)
-                                   WHERE rn = 1)) I
-            LEFT JOIN POST P ON P.POST_ID = I.IMG_POST
-            WHERE %s
-            """.formatted(whereClause.toString());
+                SELECT P.POST_ID,
+                       P.POST_TITLE,
+                       P.POST_PRICE,
+                       P.POST_REGION,
+                       I.IMG_URL,
+                       P.POST_VIEW,
+                       P.POST_DATE
+                FROM (SELECT IMG_POST, IMG_URL
+                      FROM POST_IMG
+                      WHERE IMG_ID IN (SELECT IMG_ID
+                                       FROM (SELECT IMG_ID,
+                                                    ROW_NUMBER() OVER (PARTITION BY IMG_POST ORDER BY SUBSTR(IMG_ID, 5) + 0) AS rn
+                                             FROM POST_IMG)
+                                       WHERE rn = 1)) I
+                LEFT JOIN POST P ON P.POST_ID = I.IMG_POST
+                WHERE %s
+                """.formatted(whereClause.toString());
 
         try {
             return jdbcTemplate.query(sql, paramsList.toArray(), new CommonRowMapper());
         } catch (Exception e) {
             log.error("게시글 목록 불러오기 실패, region: {}, category: {}, keyword: {}, error: {}", region, category, keyword, e.getMessage());
             return null;
+        }
+    }
+
+    // 카테고리/지역 상관없이 조회수 상위 8개 게시물
+    public List<PostVO> getTopEightPostList() {
+        String sql = """
+                SELECT P.POST_ID, P.POST_TITLE, P.POST_REGION, I.IMG_URL
+                FROM (SELECT IMG_POST, IMG_URL
+                      FROM POST_IMG
+                      WHERE IMG_ID IN (SELECT IMG_ID
+                                       FROM (SELECT IMG_ID,
+                                                ROW_NUMBER() OVER (PARTITION BY IMG_POST ORDER BY SUBSTR(IMG_ID, 5) + 0) AS rn
+                                         FROM POST_IMG)
+                                       WHERE rn = 1)) I
+                         RIGHT JOIN (SELECT POST_ID,
+                                      POST_TITLE,
+                                      POST_REGION,
+                                      POST_VIEW
+                               FROM POST
+                               WHERE POST_DISABLED = 0 AND ROWNUM <= 8
+                               ORDER BY POST_VIEW DESC) P
+                ON I.IMG_POST = P.POST_ID
+                
+                """;
+
+        try {
+            return jdbcTemplate.query(sql, new MainSlickRowMapper());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private class MainSlickRowMapper implements RowMapper<PostVO> {
+        @Override
+        public PostVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new PostVO(
+                    rs.getString("POST_ID"),
+                    rs.getString("POST_TITLE"),
+                    getRegionName(rs.getString("POST_REGION")),
+                    rs.getString("IMG_URL")
+            );
+        }
+    }
+
+    private class UserPostlistRowMapper implements RowMapper<PostVO> {
+        @Override
+        public PostVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new PostVO(
+                    rs.getString("POST_ID"),
+                    rs.getString("POST_TITLE"),
+                    rs.getInt("POST_PRICE"),
+                    getRegionName(rs.getString("POST_REGION")),
+                    rs.getString("POST_LOCATION"),
+                    rs.getString("IMG_URL"),
+                    rs.getBoolean("POST_DISABLED")
+            );
         }
     }
 
@@ -134,56 +177,6 @@ public class PostListDAO extends BaseDAO {
             );
         }
     }
-
-    // 카테고리/지역 상관없이 조회수 상위 8개 게시물
-    public List<PostVO> getTopEightPostList() {
-        String sql = """
-                SELECT P.POST_ID, P.POST_TITLE, P.POST_REGION, I.IMG_URL
-                FROM (SELECT IMG_POST, IMG_URL
-                      FROM POST_IMG
-                      WHERE IMG_ID IN (SELECT IMG_ID
-                                       FROM (SELECT IMG_ID,
-                                                    ROW_NUMBER() OVER
-                                                        (PARTITION BY IMG_POST
-                                                        ORDER BY TO_NUMBER(SUBSTR(IMG_ID, 5))) AS rn
-                                             FROM POST_IMG)
-                                       WHERE rn = 1)) I
-                         RIGHT JOIN (SELECT POST_ID,
-                                      POST_TITLE,
-                                      POST_REGION,
-                                      POST_VIEW
-                               FROM POST
-                               WHERE POST_DISABLED = 0 AND ROWNUM <= 8
-                               ORDER BY POST_VIEW DESC) P
-                ON I.IMG_POST = P.POST_ID
-                
-                """;
-
-        try {
-            List<PostVO> lst = jdbcTemplate.query(sql, new MainSlickRowMapper());
-            for (PostVO post : lst) {
-                post.setPostRegion(getRegionName(post.getPostRegion()));
-            }
-
-            return lst;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static class MainSlickRowMapper implements RowMapper<PostVO> {
-        @Override
-        public PostVO mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new PostVO(
-                    rs.getString("POST_ID"),
-                    rs.getString("POST_TITLE"),
-                    rs.getString("POST_REGION"),
-                    rs.getString("IMG_URL")
-            );
-        }
-    }
-
-
 
 
 }

@@ -68,11 +68,12 @@ public class PostVO {
     }
 
     // 특정 유저가 게시한 게시글
-    public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postThumbnail, boolean postDisable) {
+    public PostVO(String postId, String postTitle, int postPrice, String postRegion, String postLocation,String postThumbnail, boolean postDisable) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postPrice = postPrice;
         this.postRegion = postRegion;
+        this.postLocation = postLocation;
         this.postThumbnail = postThumbnail;
         this.postDisable = postDisable;
     }
