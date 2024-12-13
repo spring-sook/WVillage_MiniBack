@@ -59,8 +59,9 @@ public class PostListDAO extends BaseDAO {
     // 검색어
     public List<PostVO> getPostList(String region, String category, String keyword) {
         List<String> paramsList = new ArrayList<>();
-        StringBuilder whereClause = new StringBuilder("POST_REGION = ? AND POST_DISABLED = 0");
-        paramsList.add(region);
+        StringBuilder whereClause = new StringBuilder("POST_REGION LIKE ? AND POST_DISABLED = 0");
+        String newCode = region.replaceAll("0+$", "");
+        paramsList.add("%" + newCode + "%");
 
         if (category != null && !category.isBlank()) {
             whereClause.append(" AND POST_CATEGORY = ?");
