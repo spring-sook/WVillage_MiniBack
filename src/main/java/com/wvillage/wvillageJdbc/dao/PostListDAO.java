@@ -103,7 +103,7 @@ public class PostListDAO extends BaseDAO {
         try {
             return jdbcTemplate.query(sql, paramsList.toArray(), new CommonRowMapper());
         } catch (Exception e) {
-            log.error("게시글 목록 불러오기 실패, region: {}, category: {}, keyword: {}, error: {}", region, category, keyword, e.getMessage());
+            log.error("게시글 목록 불러오기 실패, region: {}, category: {}, keyword: {}, error: {}", getRegionName(region), category, keyword, e.getMessage());
             return null;
         }
     }
