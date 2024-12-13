@@ -62,6 +62,7 @@ public class ReserveDAO extends BaseDAO {
                        P.POST_TITLE,
                        P.POST_PRICE,
                        P.POST_REGION,
+                       P.POST_LOCATION,
                        RS.RES_ID,
                        RS.RES_START,
                        RS.RES_END,
@@ -85,29 +86,23 @@ public class ReserveDAO extends BaseDAO {
                          LEFT JOIN (SELECT POST_ID,
                                             POST_TITLE,
                                             POST_PRICE,
-                                            POST_REGION
+                                            POST_REGION,
+                                            POST_LOCATION
                                      FROM POST) P
                                     ON RS.RES_POST = P.POST_ID
                          LEFT JOIN REVIEW RV ON RV.REVIEW_RESERVE = RS.RES_ID
                 """;
 
         try {
-            List<CommonVo> lst = jdbcTemplate.query(sql, new Object[]{email}, new myReserveListMapper());
+            return jdbcTemplate.query(sql, new Object[]{email}, new myReserveListMapper());
 
-            for (CommonVo vo : lst) {
-                log.warn(vo.getReview().getReviewContent()); // String, String 때문에 tags 대신 Content 사용
-                ReviewVO rvo = new ReviewVO(vo.getReview().getReviewId(), tagsIntoString(vo.getReview().getReviewContent()));
-                vo.setReview(rvo);
-            }
-
-            return lst;
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
         }
     }
 
-    private static class myReserveListMapper implements RowMapper<CommonVo> {
+    private class myReserveListMapper implements RowMapper<CommonVo> {
         @Override
         public CommonVo mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new CommonVo(
@@ -116,6 +111,7 @@ public class ReserveDAO extends BaseDAO {
                             rs.getString("POST_TITLE"),
                             rs.getInt("POST_PRICE"),
                             rs.getString("POST_REGION"),
+                            rs.getString("POST_LOCATION"),
                             rs.getString("IMG_URL")
                     ),
                     new ReserveVO(
@@ -127,7 +123,7 @@ public class ReserveDAO extends BaseDAO {
                     ),
                     new ReviewVO(
                             rs.getString("REVIEW_ID"),
-                            rs.getString("REVIEW_TAG")
+                            tagsIntoString(rs.getString("REVIEW_TAG"))
                     )
             );
         }
@@ -171,21 +167,14 @@ public class ReserveDAO extends BaseDAO {
                 """;
 
         try {
-            List<CommonVo> lst = jdbcTemplate.query(sql, new Object[]{email}, new myReserveListManagementMapper());
-            for (CommonVo vo : lst) {
-                log.warn(vo.getReview().getReviewContent()); // String, String 때문에 tags 대신 Content 사용
-                ReviewVO rvo = new ReviewVO(vo.getReview().getReviewId(), tagsIntoString(vo.getReview().getReviewContent()));
-                vo.setReview(rvo);
-            }
-
-            return lst;
+            return jdbcTemplate.query(sql, new Object[]{email}, new myReserveListManagementMapper());
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
         }
     }
 
-    private static class myReserveListManagementMapper implements RowMapper<CommonVo> {
+    private class myReserveListManagementMapper implements RowMapper<CommonVo> {
         @Override
         public CommonVo mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new CommonVo(
@@ -205,7 +194,7 @@ public class ReserveDAO extends BaseDAO {
                     ),
                     new ReviewVO(
                             rs.getString("REVIEW_ID"),
-                            rs.getString("REVIEW_TAG")
+                            tagsIntoString(rs.getString("REVIEW_TAG"))
                     )
             );
         }
@@ -275,11 +264,11 @@ public class ReserveDAO extends BaseDAO {
         try {
             int rows = jdbcTemplate.update(updateReserve, vo.getReserveState(), 1, vo.getReserveId());
 
-            // Owner's points update
+            // 게시자의 포인트
             int ownerPointChange = isApprove ? vo.getReserveTotalPrice() : -vo.getReserveTotalPrice();
             rows += jdbcTemplate.update(updateOwner, ownerPointChange, vo.getReservePost());
 
-            // Customer's points update
+            // 예약자의 포인트
             int customerPointChange = isApprove ? -vo.getReserveTotalPrice() : vo.getReserveTotalPrice();
             rows += jdbcTemplate.update(updateCustomer, customerPointChange, vo.getReserveEmail());
 
