@@ -81,8 +81,8 @@ public class ReserveController {
     }
 
     // 예약 거절, 완료
-    @PostMapping("/reserveUpdate")
-    public ResponseEntity<ReserveVO> reserveDeny(@RequestBody ReserveVO reserveVO) {
+    @PostMapping("/reserveEnd")
+    public ResponseEntity<ReserveVO> reserveEnd(@RequestBody ReserveVO reserveVO) {
         boolean isSuccess = reserveDAO.reserveUpdate(reserveVO);
         if (isSuccess) {
             return ResponseEntity.ok(reserveVO);

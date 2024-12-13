@@ -241,9 +241,15 @@ public class ReserveDAO extends BaseDAO {
 
 
     private boolean updateReserve(ReserveVO vo, boolean isApprove) {
-        String updateReserve = """
+        String AcceptReserve = """
                 UPDATE RESERVE
                 SET RES_STATE = ?, RES_NEW_MSG = ?
+                WHERE RES_ID = ?
+                """;
+
+        String cancelReserve = """
+                UPDATE RESERVE
+                SET RES_STATE = ?, RES_NEW_MSG = ?, RES_REASON = ?
                 WHERE RES_ID = ?
                 """;
 
@@ -262,16 +268,16 @@ public class ReserveDAO extends BaseDAO {
                 """;
 
         try {
-            int rows = jdbcTemplate.update(updateReserve, vo.getReserveState(), 1, vo.getReserveId());
-
-            // 게시자의 포인트
-            int ownerPointChange = isApprove ? vo.getReserveTotalPrice() : -vo.getReserveTotalPrice();
-            rows += jdbcTemplate.update(updateOwner, ownerPointChange, vo.getReservePost());
-
-            // 예약자의 포인트
-            int customerPointChange = isApprove ? -vo.getReserveTotalPrice() : vo.getReserveTotalPrice();
-            rows += jdbcTemplate.update(updateCustomer, customerPointChange, vo.getReserveEmail());
-
+            int rows;
+            if (!isApprove) {
+                rows = jdbcTemplate.update(cancelReserve, vo.getReserveState(), 1, vo.getReserveReason(), vo.getReserveId());
+                rows += jdbcTemplate.update(updateOwner, vo.getReserveTotalPrice(), vo.getReservePost());
+                rows += jdbcTemplate.update(updateCustomer, -vo.getReserveTotalPrice(), vo.getReserveEmail());
+            } else {
+                rows = jdbcTemplate.update(AcceptReserve, vo.getReserveState(), 1, vo.getReserveId());
+                rows += jdbcTemplate.update(updateOwner, -vo.getReserveTotalPrice(), vo.getReservePost());
+                rows += jdbcTemplate.update(updateCustomer, vo.getReserveTotalPrice(), vo.getReserveEmail());
+            }
             return rows > 0;
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -280,13 +286,20 @@ public class ReserveDAO extends BaseDAO {
     }
 
 
+    // 예약 거절, 완료
     public boolean reserveUpdate(ReserveVO vo) {
-        String sql = """
-                UPDATE RESERVE SET RES_STATE = ?, RES_NEW_MSG = ? WHERE RES_ID = ?
-                """;
+        String complete = "UPDATE RESERVE SET RES_STATE = ?, RES_NEW_MSG = ? WHERE RES_ID = ?";
+        String deny = "UPDATE RESERVE SET RES_STATE = ?, RES_NEW_MSG = ?, RES_REASON = ? WHERE RES_ID = ?";
+
 
         try {
-            int rows = jdbcTemplate.update(sql, vo.getReserveState(), 1, vo.getReserveId());
+            int rows;
+            if (vo.getReserveState().equals("deny")) {
+                rows = jdbcTemplate.update(deny, vo.getReserveState(), 1, vo.getReserveReason(), vo.getReserveId());
+            } else {
+                rows = jdbcTemplate.update(complete, vo.getReserveState(), 1, vo.getReserveId());
+            }
+
             return rows > 0;
         } catch (Exception e) {
             log.error(e.getMessage());
