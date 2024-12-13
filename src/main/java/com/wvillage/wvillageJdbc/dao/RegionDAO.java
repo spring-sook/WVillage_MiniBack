@@ -47,6 +47,7 @@ public class RegionDAO {
                 SELECT MIN(REGION_CODE) AS REGION_CODE, REGION_SIDO
                 FROM REGION
                 GROUP BY REGION_SIDO
+                ORDER BY REGION_SIDO
                 """;
 
         try {
@@ -78,7 +79,8 @@ public class RegionDAO {
                         SELECT MIN(REGION_CODE) AS REGION_CODE, REGION_SIGUNGU
                         FROM REGION WHERE REGION_CODE LIKE ?
                                       AND REGION_SIGUNGU IS NOT NULL
-                                      GROUP BY REGION_SIGUNGU""";
+                                      GROUP BY REGION_SIGUNGU
+                                      ORDER BY REGION_SIGUNGU""";
                 return jdbcTemplate.query(sql, new Object[]{newCode + "%"}, new RegionNameMapper("REGION_SIGUNGU"));
             } else if (emd.equals("000")) {
                 log.warn("읍면동 요청");
@@ -87,7 +89,8 @@ public class RegionDAO {
                         FROM REGION
                         WHERE REGION_CODE LIKE ?
                           AND REGION_EMD IS NOT NULL
-                          GROUP BY REGION_EMD""";
+                          GROUP BY REGION_EMD
+                          ORDER BY REGION_EMD""";
                 return jdbcTemplate.query(sql, new Object[]{newCode + "%"}, new RegionNameMapper("REGION_EMD"));
             } else if (ri.equals("00")) {
                 log.warn("리 요청");
@@ -96,7 +99,8 @@ public class RegionDAO {
                         FROM REGION
                         WHERE REGION_CODE LIKE ?
                           AND REGION_RI IS NOT NULL
-                          GROUP BY REGION_RI""";
+                          GROUP BY REGION_RI
+                          ORDER BY REGION_RI""";
                 return jdbcTemplate.query(sql, new Object[]{newCode + "%"}, new RegionNameMapper("REGION_RI"));
             }
             return null;
