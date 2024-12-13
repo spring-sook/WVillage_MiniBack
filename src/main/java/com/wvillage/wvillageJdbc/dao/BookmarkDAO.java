@@ -20,10 +20,10 @@ public class BookmarkDAO extends BaseDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public int isBookmarking(String email, String postId){
+    public int isBookmarking(String email, String postId) {
         String sql = "SELECT COUNT(*) FROM bookmark WHERE BK_EMAIL = ? AND BK_POST = ?";
 
-        try{
+        try {
             return jdbcTemplate.queryForObject(sql, new Object[]{email, postId}, Integer.class);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -31,7 +31,7 @@ public class BookmarkDAO extends BaseDAO {
         }
     }
 
-    public Boolean insertBookmark(String postId, String email) {
+    public boolean insertBookmark(String postId, String email) {
         String sql = "INSERT INTO BOOKMARK (BK_POST, BK_EMAIL) VALUES (?, ?) ";
 
         try {
@@ -43,7 +43,7 @@ public class BookmarkDAO extends BaseDAO {
         }
     }
 
-    public Boolean deleteBookmark(String postId, String email) {
+    public boolean deleteBookmark(String postId, String email) {
         String sql = "DELETE FROM BOOKMARK WHERE BK_POST = ? AND BK_EMAIL = ? ";
 
         try {
@@ -55,6 +55,7 @@ public class BookmarkDAO extends BaseDAO {
         }
     }
 
+    // 북마크한 게시물
     public List<PostVO> getBookmarkedPostList(String email) {
         String sql = """
                 SELECT P.POST_ID,
@@ -94,14 +95,14 @@ public class BookmarkDAO extends BaseDAO {
         }
     }
 
-    private static class GetBookmarkedPost implements RowMapper<PostVO> {
+    private class GetBookmarkedPost implements RowMapper<PostVO> {
         @Override
         public PostVO mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new PostVO(
                     rs.getString("POST_ID"),
                     rs.getString("POST_TITLE"),
                     rs.getInt("POST_PRICE"),
-                    rs.getString("POST_REGION"),
+                    getRegionName(rs.getString("POST_REGION")),
                     rs.getString("IMG_URL"),
                     rs.getInt("POST_VIEW"),
                     getOffsetDateTime(rs.getTimestamp("POST_DATE"))
