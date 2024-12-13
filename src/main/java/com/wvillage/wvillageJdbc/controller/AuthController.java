@@ -36,7 +36,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody MemberVO memberVo) {
-        log.info("회원가입 시도: {}", memberVo.getEmail());
+        log.info("회원가입 요청 데이터: {}", memberVo); // 요청 데이터 로그
 
         boolean isSignupSuccess = authDao.signup(memberVo);
 
@@ -48,6 +48,7 @@ public class AuthController {
             return ResponseEntity.status(400).body("회원가입 중 오류가 발생했습니다.");
         }
     }
+
 
     @GetMapping("/find-email")
     public ResponseEntity<String> findEmail(
@@ -103,6 +104,22 @@ public class AuthController {
         } else {
             log.error("비밀번호 재설정 실패: email={}", email);
             return ResponseEntity.status(500).body("비밀번호 변경 중 오류가 발생했습니다.");
+        }
+    }
+
+
+    @PostMapping("/edit-profile")
+    public ResponseEntity<String> editProfile(@RequestBody MemberVO memberVo) {
+        log.info("회원정보 수정 요청: {}", memberVo.getEmail());
+
+        boolean isUpdated = authDao.updateMemberInfo(memberVo);
+
+        if (isUpdated) {
+            log.info("회원정보 수정 성공: {}", memberVo.getEmail());
+            return ResponseEntity.ok("회원정보가 성공적으로 수정되었습니다.");
+        } else {
+            log.error("회원정보 수정 실패: {}", memberVo.getEmail());
+            return ResponseEntity.status(500).body("회원정보 수정 중 오류가 발생했습니다.");
         }
     }
 }

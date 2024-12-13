@@ -9,6 +9,7 @@ import java.lang.reflect.Member;
 @AllArgsConstructor // 모든 매개변수가 있는 생성자
 @NoArgsConstructor // 기본 생성자
 @ToString
+
 public class MemberVO {
     private String email;
     private String password;
