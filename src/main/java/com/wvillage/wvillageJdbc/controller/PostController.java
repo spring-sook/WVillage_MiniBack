@@ -20,9 +20,11 @@ public class PostController {
     private final PostDAO postDao;
     private final RegionDAO regionDao;
 
+    // 게시글 작성
     @PostMapping("/postWrite")
     public ResponseEntity<Boolean> postWrite(@RequestBody PostRequest postRequest) {
         String postId = postDao.postWrite(postRequest.getPostVo(), postRequest.getImgUrls());
+
         if (postId != null) {
             return ResponseEntity.ok(true); // 게시글 ID를 반환
         } else {
@@ -66,16 +68,26 @@ public class PostController {
         return ResponseEntity.ok(vo);
     }
 
-
+    // 지역 정보
     @GetMapping("/getRegion/{areaCode}")
     public ResponseEntity<List<RegionVO>> getRegion(@PathVariable String areaCode) {
         List<RegionVO> list = regionDao.getRegion(areaCode);
         return ResponseEntity.ok(list);
     }
 
+    // 조회수 +1
     @PostMapping("/postView/{postId}")
     public ResponseEntity<Boolean> updatePostView(@PathVariable String postId) {
         boolean isSuccess = postDao.postViewUpdate(postId);
+        return ResponseEntity.ok(isSuccess);
+    }
+
+    // 게시글 활성화/비활성화
+    @PostMapping("/postActivate")
+    public ResponseEntity<Boolean> postActivate(@RequestParam Boolean postDisable, @RequestParam String postId) {
+        log.warn("postDisable: {}", postDisable);
+        log.warn(postId);
+        boolean isSuccess = postDao.postActivate(postDisable, postId);
         return ResponseEntity.ok(isSuccess);
     }
 }

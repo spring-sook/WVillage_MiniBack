@@ -44,6 +44,7 @@ public class UserProfileController {
     // 새로운 알림 개수
     @GetMapping("/reserveMsg")
     public ResponseEntity<ReserveVO> getReserveMsg(@RequestParam String email) {
+        log.warn(email);
         ReserveVO reserveVO = userProfileDAO.getNewMsg(email);
         return ResponseEntity.ok(reserveVO);
     }

@@ -24,6 +24,7 @@ public class PostDAO extends BaseDAO {
 
     public String postWrite(PostVO postVo, List<String> imgUrls) {
         try {
+            log.error(imgUrls.toString());
             int result = jdbcTemplate.update(INSERT_POST_WRITE, postVo.getPostEmail(), postVo.getPostCat(), postVo.getPostTitle(), postVo.getPostContent(), postVo.getPostPrice(), postVo.getPostRegion(), postVo.getPostLocation());
 
             if (result > 0) {
@@ -87,6 +88,19 @@ public class PostDAO extends BaseDAO {
             return result > 0;
         } catch (DataAccessException e) {
             log.error("조회수 업데이트 중 예외 발생", e);
+            return false;
+        }
+    }
+
+    // 게시물 활성화/비활성화
+    public Boolean postActivate(Boolean postDisable, String postId) {
+        String sql = "UPDATE POST SET POST_DISABLED = ? WHERE POST_ID = ? ";
+        try {
+            int postDisabledValue = postDisable ? 1 : 0;
+            int result = jdbcTemplate.update(sql, postDisabledValue, postId);
+            return result > 0;
+        } catch (DataAccessException e) {
+            log.error("게시물 활성화/비활성화 중 에러", e);
             return false;
         }
     }
