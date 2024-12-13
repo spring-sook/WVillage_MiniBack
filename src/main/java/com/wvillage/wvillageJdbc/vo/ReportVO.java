@@ -2,6 +2,7 @@ package com.wvillage.wvillageJdbc.vo;
 
 import lombok.*;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 @Getter
@@ -11,9 +12,15 @@ import java.util.Date;
 @ToString
 public class ReportVO {
     private String reportId;
-    private String reportReporter;
-    private String reportReported;
-    private String reportReason;
-    private Date reportDate;
     private String reportContent;
+    private OffsetDateTime reportDate;
+    private String reportState;
+    private String reporter;
+    private String reporterNickName;
+    private String reporterImg;
+    private int reporterCount;
+    private String reported;
+    private String reportedNickName;
+    private String reportedImg;
+    private int reportedCount;
 }
