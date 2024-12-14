@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
@@ -89,14 +88,14 @@ public class BookmarkDAO extends BaseDAO {
                         ON P.POST_ID = I.IMG_POST
                 """;
         try {
-            return jdbcTemplate.query(sql, new Object[]{email}, new GetBookmarkedPost());
+            return jdbcTemplate.query(sql, new Object[]{email}, new GetBookmarkRowMapper());
         } catch (DataAccessException e) {
             log.error("북마크된 게시글 가져오기 실패", e);
             return null;
         }
     }
 
-    private class GetBookmarkedPost implements RowMapper<PostVO> {
+    private class GetBookmarkRowMapper implements RowMapper<PostVO> {
         @Override
         public PostVO mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new PostVO(
