@@ -243,13 +243,13 @@ public class ReserveDAO extends BaseDAO {
     private boolean updateReserve(ReserveVO vo, boolean isApprove) {
         String AcceptReserve = """
                 UPDATE RESERVE
-                SET RES_STATE = ?, RES_MSG_LENTED = ?
+                SET RES_STATE = ?, RES_MSG_LENTED = 1
                 WHERE RES_ID = ?
                 """;
 
         String cancelReserve = """
                 UPDATE RESERVE
-                SET RES_STATE = ?, RES_MSG_LENT = ?, RES_REASON = ?
+                SET RES_STATE = ?, RES_MSG_LENT = 1, RES_REASON = ?
                 WHERE RES_ID = ?
                 """;
 
@@ -270,11 +270,12 @@ public class ReserveDAO extends BaseDAO {
         try {
             int rows;
             if (!isApprove) {
-                rows = jdbcTemplate.update(cancelReserve, vo.getReserveState(), 1, vo.getReserveReason(), vo.getReserveId());
+                rows = jdbcTemplate.update(cancelReserve, vo.getReserveState(), vo.getReserveReason(), vo.getReserveId());
                 rows += jdbcTemplate.update(updateOwner, vo.getReserveTotalPrice(), vo.getReservePost());
                 rows += jdbcTemplate.update(updateCustomer, -vo.getReserveTotalPrice(), vo.getReserveEmail());
             } else {
-                rows = jdbcTemplate.update(AcceptReserve, vo.getReserveState(), 1, vo.getReserveId());
+                log.error(vo.toString());
+                rows = jdbcTemplate.update(AcceptReserve, vo.getReserveState(), vo.getReserveId());
                 rows += jdbcTemplate.update(updateOwner, -vo.getReserveTotalPrice(), vo.getReservePost());
                 rows += jdbcTemplate.update(updateCustomer, vo.getReserveTotalPrice(), vo.getReserveEmail());
             }

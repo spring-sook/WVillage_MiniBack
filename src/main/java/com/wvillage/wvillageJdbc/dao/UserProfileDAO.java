@@ -113,11 +113,11 @@ public class UserProfileDAO extends BaseDAO {
                     SUM(CASE WHEN R.RES_MSG_LENT = 1 AND P.POST_EMAIL = ? THEN 1 ELSE 0 END) AS LENT_MSG,
                     SUM(CASE WHEN R.RES_MSG_LENTED = 1 AND R.RES_EMAIL = ? THEN 1 ELSE 0 END) AS LENTED_MSG
                 FROM RESERVE R
-                LEFT JOIN POST P ON R.RES_POST = P.POST_ID;
+                LEFT JOIN POST P ON R.RES_POST = P.POST_ID
                 """;
 
         try {
-            return jdbcTemplate.queryForObject(sql, new Object[]{email}, new newMsgRowMapper(email));
+            return jdbcTemplate.queryForObject(sql, new Object[]{email, email}, new newMsgRowMapper(email));
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
@@ -134,7 +134,7 @@ public class UserProfileDAO extends BaseDAO {
         @Override
         public ReserveVO mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new ReserveVO(
-                    rs.getString(email),
+                    email,
                     rs.getInt("LENT_MSG"),
                     rs.getInt("LENTED_MSG")
             );
