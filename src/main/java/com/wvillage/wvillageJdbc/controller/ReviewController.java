@@ -36,6 +36,9 @@ public class ReviewController {
     public ResponseEntity<String> insertReview(@RequestParam String email,
                                                @RequestParam String reserve,
                                                @RequestParam String tags) {
+        log.error(email);
+        log.error(reserve);
+        log.error(tags);
         boolean result = reviewDAO.insertReview(email, reserve, tags);
 
         if (result) {
@@ -43,5 +46,11 @@ public class ReviewController {
         } else {
             return ResponseEntity.ok("Failed to insert review.");
         }
+    }
+
+    @GetMapping("/isReview")
+    public ResponseEntity<Boolean> isReview(@RequestParam String email, @RequestParam String reserve) {
+        boolean result = reviewDAO.isReview(email, reserve);
+        return ResponseEntity.ok(result);
     }
 }

@@ -4,6 +4,7 @@ import com.wvillage.wvillageJdbc.vo.ReviewVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -56,6 +57,17 @@ public class ReviewDAO extends BaseDAO {
         }
     }
 
+    // 리뷰 작성 여부
+    public boolean isReview(String email, String reserve) {
+        String sql = "SELECT COUNT(*) FROM REVIEW WHERE REVIEW_EMAIL = ? AND REVIEW_RESERVE = ? ";
+        try {
+            int rst = jdbcTemplate.queryForObject(sql, new Object[]{email, reserve}, Integer.class);
+            return rst > 0;
+        } catch (DataAccessException e) {
+            log.error("리뷰 작성 여부 조회 중 에러 ", e);
+            throw new RuntimeException("리뷰 작성 여부 조회 중 에러: " + email + " and reserve: " + reserve, e);
+        }
+    }
 
     // 게시글에 달린 리뷰 목록 반환
     public List<ReviewVO> getPostReviewList(String postId) {
