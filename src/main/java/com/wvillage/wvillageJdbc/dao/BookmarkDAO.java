@@ -64,7 +64,8 @@ public class BookmarkDAO extends BaseDAO {
                        P.POST_REGION,
                        I.IMG_URL,
                        P.POST_VIEW,
-                       P.POST_DATE
+                       P.POST_DATE,
+                       P.POST_DISABLED
                 FROM (SELECT IMG_POST, IMG_URL
                       FROM POST_IMG
                       WHERE IMG_ID IN (SELECT IMG_ID
@@ -79,12 +80,12 @@ public class BookmarkDAO extends BaseDAO {
                                         POST_PRICE,
                                         POST_REGION,
                                         POST_VIEW,
-                                        POST_DATE
+                                        POST_DATE,
+                                        POST_DISABLED
                                  FROM POST
                                  WHERE POST_ID IN (SELECT BK_POST
                                                    FROM BOOKMARK
-                                                   WHERE BK_EMAIL = ? )
-                                   AND POST_DISABLED = 0) P
+                                                   WHERE BK_EMAIL = ? )) P
                         ON P.POST_ID = I.IMG_POST
                 """;
         try {
@@ -105,7 +106,8 @@ public class BookmarkDAO extends BaseDAO {
                     getRegionName(rs.getString("POST_REGION")),
                     rs.getString("IMG_URL"),
                     rs.getInt("POST_VIEW"),
-                    getOffsetDateTime(rs.getTimestamp("POST_DATE"))
+                    getOffsetDateTime(rs.getTimestamp("POST_DATE")),
+                    rs.getBoolean("POST_DISABLED")
             );
         }
     }

@@ -109,7 +109,7 @@ public class UserProfileDAO extends BaseDAO {
     // 읽지 않은 알림
     public ReserveVO getNewMsg(String email) {
         String sql = """
-                SELET
+                SELECT
                     SUM(CASE WHEN R.RES_MSG_LENT = 1 AND P.POST_EMAIL = ? THEN 1 ELSE 0 END) AS LENT_MSG,
                     SUM(CASE WHEN R.RES_MSG_LENTED = 1 AND R.RES_EMAIL = ? THEN 1 ELSE 0 END) AS LENTED_MSG
                 FROM RESERVE R
