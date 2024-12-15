@@ -17,13 +17,15 @@ public class ReviewVO {
     private String reviewTags;
     private List<String> reviewTagContent;
     private int recordCount;
+    private int reviewScore;
 
 
     // 특정 유저가 작성한 리뷰 목록을 위한 생성자
-    public ReviewVO(String reviewEmail, String reviewContent, int recordCount) {
+    public ReviewVO(String reviewEmail, String reviewContent, int recordCount, int reviewScore) {
         this.reviewEmail = reviewEmail;
         this.reviewContent = reviewContent;
         this.recordCount = recordCount;
+        this.reviewScore = reviewScore;
     }
 
     public ReviewVO(String reviewEmail, String reviewProfile, String reviewTags){

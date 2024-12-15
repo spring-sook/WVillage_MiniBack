@@ -127,9 +127,16 @@ public class ReviewDAO extends BaseDAO {
 
     // 해당 사용자의 이메일을 인자로 받아 VO의 리스트를 반환
     public List<ReviewVO> getReviewRecord(String email) {
-        String sql = "SELECT RR.REC_EMAIL, RT.TAG_CONTENT, RR.REC_COUNT " +
-                "FROM (SELECT * FROM REVIEW_RECORD WHERE REC_EMAIL = ?) RR " +
-                "JOIN REVIEW_TAG RT ON RR.REC_REVIEW = RT.TAG_ID";
+        String sql = """
+                SELECT *
+                FROM ( SELECT RR.REC_EMAIL, RT.TAG_CONTENT, RR.REC_COUNT, RT.TAG_SCORE
+                       FROM (SELECT *
+                             FROM REVIEW_RECORD
+                             WHERE REC_EMAIL = ?) RR
+                           JOIN REVIEW_TAG RT
+                               ON RR.REC_REVIEW = RT.TAG_ID
+                       ORDER BY RR.REC_COUNT DESC ) WHERE ROWNUM <= 6
+                """;
 
         try {
             return jdbcTemplate.query(sql, new Object[]{email}, new ReviewRecordMapper());
@@ -145,7 +152,8 @@ public class ReviewDAO extends BaseDAO {
             return new ReviewVO(
                     rs.getString("REC_EMAIL"),
                     rs.getString("TAG_CONTENT"),
-                    rs.getInt("REC_COUNT")
+                    rs.getInt("REC_COUNT"),
+                    rs.getInt("TAG_SCORE")
             );
         }
     }
