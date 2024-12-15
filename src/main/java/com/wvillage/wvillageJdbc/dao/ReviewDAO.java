@@ -43,6 +43,10 @@ public class ReviewDAO extends BaseDAO {
                                  WHERE r.RES_ID = ?)
                 """;
 
+        String sql = """
+                UPDATE MEMBER SET POINT = POINT+5 WHERE EMAIL = ?
+                """;
+
         String[] tagList = tags.split(",");
 
         // 태그 ID를 문자열로 변환
@@ -53,6 +57,8 @@ public class ReviewDAO extends BaseDAO {
 
         try {
             jdbcTemplate.update(reserveSql, email, reserve, tags);
+
+            jdbcTemplate.update(sql, email);
 
             log.error("태그 목록 : {}", Arrays.toString(tagList));
 
