@@ -90,4 +90,11 @@ public class ReserveController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
+    // 포인트 잔액 확인
+    @GetMapping("/remainPoints")
+    public ResponseEntity<Integer> remainPoints(@RequestParam String email) {
+        int remaining = reserveDAO.remainPoints(email);
+        return ResponseEntity.ok(remaining);
+    }
+
 }

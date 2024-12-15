@@ -6,6 +6,7 @@ import com.wvillage.wvillageJdbc.vo.ReserveVO;
 import com.wvillage.wvillageJdbc.vo.ReviewVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -326,6 +327,17 @@ public class ReserveDAO extends BaseDAO {
         } catch (Exception e) {
             log.error(e.getMessage());
             return false;
+        }
+    }
+
+    // 포인트 잔액 확인
+    public int remainPoints(String email) {
+        String sql = "SELECT POINT FROM MEMBER WHERE EMAIL= ? ";
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{email}, Integer.class);
+        } catch (DataAccessException e) {
+            log.error("포인트 잔액 확인 중 에러 : {}", e);
+            throw e;
         }
     }
 
