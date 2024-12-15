@@ -34,7 +34,7 @@ public class MemberVO {
         this.reportCount = reportCount;
     }
 
-    public MemberVO(String email, String name, String nickname, String phone, int score, String profileImg, String areaCode, String grade, int point) {
+    public MemberVO(String email, String name, String nickname, String phone, int score, String profileImg, String areaCode, String grade, int point, int exist) {
         this.email = email;
         this.name = name;
         this.nickname = nickname;
@@ -44,6 +44,7 @@ public class MemberVO {
         this.areaCode = areaCode;
         this.grade = grade;
         this.point = point;
+        this.exist = exist;
     }
 
     // 게시글을 올린 유저의 정보
