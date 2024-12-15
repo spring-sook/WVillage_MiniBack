@@ -24,8 +24,8 @@ public class AuthDAO {
     }
 
 
-    private static final String LOGIN = "SELECT EMAIL, NAME, NICKNAME, PHONE, SCORE, PROFILE_IMG, AREA_CODE, GRADE, POINT " +
-            "FROM MEMBER WHERE EMAIL = ? AND PASSWORD = ?";
+    private static final String LOGIN = "SELECT EMAIL, NAME, NICKNAME, PHONE, SCORE, PROFILE_IMG, AREA_CODE, GRADE, POINT, EXIST " +
+            "FROM MEMBER WHERE EMAIL = ? AND PASSWORD = ? AND EXIST = 0";
 
 
     private static final String SIGNUP = "INSERT INTO MEMBER (EMAIL, PASSWORD, NAME, NICKNAME, PHONE, AREA_CODE, GRADE) " +
@@ -34,7 +34,20 @@ public class AuthDAO {
 
     public MemberVO login(String email, String password) {
         try {
-            return jdbcTemplate.queryForObject(LOGIN, new Object[]{email, password}, new LoginInfoRowMapper());
+            MemberVO member = jdbcTemplate.queryForObject(
+                    LOGIN,
+                    new Object[]{email, password},
+                    new LoginInfoRowMapper()
+            );
+
+            // EXIST 값이 1이면 로그인 실패 처리
+            if (member.getExist() == 1) {
+                log.info("탈퇴한 회원입니다.");
+                return null;
+            }
+
+            return member;
+
         } catch (DataAccessException e) {
             log.error("로그인 실패 중 오류 발생", e);
             return null;
@@ -88,7 +101,8 @@ public class AuthDAO {
                     rs.getString("PROFILE_IMG"),
                     rs.getString("AREA_CODE"),
                     rs.getString("GRADE"),
-                    rs.getInt("POINT")
+                    rs.getInt("POINT"),
+                    rs.getInt("EXIST")
             );
         }
     }
