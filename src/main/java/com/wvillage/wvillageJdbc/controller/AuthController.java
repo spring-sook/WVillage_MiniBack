@@ -4,9 +4,11 @@ import com.wvillage.wvillageJdbc.dao.AuthDAO;
 import com.wvillage.wvillageJdbc.vo.MemberVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -71,18 +73,25 @@ public class AuthController {
     }
 
     @PostMapping("/password-reset-request")
-    public ResponseEntity<String> requestPasswordReset(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, Object>> requestPasswordReset(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         String phone = request.get("phone");
         log.info("비밀번호 재설정 인증 요청: email={}, phone={}", email, phone);
 
         boolean isUserValid = authDao.verifyUser(email, phone);
+
+        Map<String, Object> response = new HashMap<>();
         if (isUserValid) {
-            return ResponseEntity.ok("사용자 인증 성공. 비밀번호 재설정 페이지로 이동하세요.");
+            response.put("isValid", true);
+            response.put("message", "사용자 인증 성공. 비밀번호 재설정 페이지로 이동하세요.");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(404).body("사용자 정보를 확인할 수 없습니다.");
+            response.put("isValid", false);
+            response.put("message", "사용자 정보를 확인할 수 없습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
 
     @PostMapping("/password-reset")
     public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
