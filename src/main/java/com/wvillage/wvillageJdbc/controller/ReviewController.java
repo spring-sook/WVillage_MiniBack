@@ -25,7 +25,7 @@ public class ReviewController {
     }
 
     // 사용자 리뷰
-    @GetMapping("/otherProfile/{email}")
+    @GetMapping("/userProfile/{email}")
     public ResponseEntity<List<ReviewVO>> getReviewRecord(@PathVariable String email) {
         List<ReviewVO> reviewVOList = reviewDAO.getReviewRecord(email);
         return ResponseEntity.ok(reviewVOList);
