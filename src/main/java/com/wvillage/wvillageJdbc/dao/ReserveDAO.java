@@ -91,11 +91,20 @@ public class ReserveDAO extends BaseDAO {
                                      FROM POST) P
                                     ON RS.RES_POST = P.POST_ID
                          LEFT JOIN REVIEW RV ON RV.REVIEW_RESERVE = RS.RES_ID
+                ORDER BY RES_START DESC
+                """;
+
+        String msgRead = """
+                UPDATE RESERVE SET
+                RES_MSG_LENTED = 0
+                WHERE RES_EMAIL = ?
+                AND RES_MSG_LENTED = 1
                 """;
 
         try {
+            int row = jdbcTemplate.update(msgRead, email);
+            log.error("{}", row);
             return jdbcTemplate.query(sql, new Object[]{email}, new myReserveListMapper());
-
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
@@ -164,9 +173,21 @@ public class ReserveDAO extends BaseDAO {
                                    ON POST_ID = IMG_POST
                          JOIN RESERVE RS ON POST_ID = RES_POST
                          LEFT JOIN REVIEW RV ON RES_ID = REVIEW_RESERVE
+                ORDER BY RES_START DESC
+                """;
+
+        String msgRead = """
+                UPDATE RESERVE SET
+                RES_MSG_LENT = 0
+                WHERE RES_POST IN (SELECT POST_ID
+                FROM POST
+                WHERE POST_EMAIL = ?)
+                AND RES_MSG_LENT = 1
                 """;
 
         try {
+            int row = jdbcTemplate.update(msgRead, email);
+            log.error("{}", row);
             return jdbcTemplate.query(sql, new Object[]{email}, new myReserveListManagementMapper());
         } catch (Exception e) {
             log.error(e.getMessage());
