@@ -139,7 +139,7 @@ public class AuthController {
     }
 
     @PostMapping("/signout")
-    public boolean signout(@PathVariable String email) {
+    public boolean signout(@RequestParam String email) {
         log.error(email);
         return authDao.signout(email);
     }
