@@ -23,17 +23,22 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<MemberVO> login(@RequestBody MemberVO memberVo) {
+    public ResponseEntity<?> login(@RequestBody MemberVO memberVo) {
         log.info("로그인 시도: {}", memberVo.getEmail());
         MemberVO member = authDao.login(memberVo.getEmail(), memberVo.getPassword());
 
-        if (member != null) {
-            log.info("로그인 성공: {}", member.getEmail());
-            return ResponseEntity.ok(member);
-        } else {
-            log.warn("로그인 실패: {}", memberVo.getEmail());
-            return ResponseEntity.status(401).body(null); // 401 : 인증 자격 없음
+        if (member == null) {
+            // 로그인 실패: 이메일/비밀번호 불일치
+            return ResponseEntity.status(401).body("이메일 또는 비밀번호가 잘못되었습니다.");
         }
+
+        if (member.getExist() == 1) {
+            // 로그인 실패: 비활성화된 계정
+            return ResponseEntity.status(403).body("비활성화된 계정입니다. 고객센터에 문의하세요.");
+        }
+
+        // 로그인 성공
+        return ResponseEntity.ok(member);
     }
 
 
