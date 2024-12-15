@@ -18,6 +18,8 @@ public class ReviewVO {
     private List<String> reviewTagContent;
     private int recordCount;
     private int reviewScore;
+    private List<ReviewVO> tagWithScore;
+
 
 
     // 특정 유저가 작성한 리뷰 목록을 위한 생성자
@@ -27,6 +29,7 @@ public class ReviewVO {
         this.recordCount = recordCount;
         this.reviewScore = reviewScore;
     }
+
 
     public ReviewVO(String reviewEmail, String reviewProfile, String reviewTags){
         this.reviewEmail = reviewEmail;
@@ -49,6 +52,16 @@ public class ReviewVO {
     public ReviewVO(String reviewId, List<String> reviewTagContent){
         this.reviewId = reviewId;
         this.reviewTagContent = reviewTagContent;
+    }
+
+    public ReviewVO(List<ReviewVO> tagWithScore, String reviewId){
+        this.reviewId = reviewId;
+        this.tagWithScore = tagWithScore;
+    }
+
+    public ReviewVO(String reviewContent, int reviewScore){
+        this.reviewContent = reviewContent;
+        this.reviewScore = reviewScore;
     }
 
 

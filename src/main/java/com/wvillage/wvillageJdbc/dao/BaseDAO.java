@@ -14,6 +14,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class BaseDAO {
@@ -105,5 +106,35 @@ public class BaseDAO {
 
     public static OffsetDateTime getOffsetDateTime(Timestamp time) {
         return time.toInstant().atZone(ZoneId.of("Asia/Seoul")).toOffsetDateTime();
+    }
+
+
+    // 태그 아이디를 내용으로 변환하기
+    public List<ReviewVO> tagsIntoVo(String tags) {
+        if (tags == null || tags.isEmpty()) {
+            return Collections.emptyList(); // null 또는 빈 문자열인 경우 빈 리스트 반환
+        }
+
+        List<String> tagsList = Arrays.stream(tags.split(","))
+                .map(String::trim)
+                .filter(tag -> !tag.isEmpty()) // 빈 태그 제거
+                .toList();
+
+        if (tagsList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String inClause = String.join(",", Collections.nCopies(tagsList.size(), "?"));
+        String sql = String.format("SELECT TAG_ID, TAG_CONTENT, TAG_SCORE FROM REVIEW_TAG WHERE TAG_ID IN (%s)", inClause);
+
+        try {
+            List<ReviewVO> reviewVOList = jdbcTemplate.query(sql, tagsList.toArray(), (rs, rowNum) -> new ReviewVO(
+                    rs.getString("TAG_CONTENT"),
+                    rs.getInt("TAG_SCORE")));
+            return reviewVOList;
+        } catch (Exception e) {
+            log.error("태그 조회 실패: {}", e.getMessage());
+            return Collections.emptyList(); // 예외 발생 시 빈 리스트 반환
+        }
     }
 }

@@ -214,8 +214,8 @@ public class ReserveDAO extends BaseDAO {
                             rs.getString("RES_REASON")
                     ),
                     new ReviewVO(
-                            rs.getString("REVIEW_ID"),
-                            tagsIntoString(rs.getString("REVIEW_TAG"))
+                            tagsIntoVo(rs.getString("REVIEW_TAG")),
+                            rs.getString("REVIEW_ID")
                     )
             );
         }
