@@ -45,7 +45,8 @@ public class ReportDAO extends BaseDAO {
                        WHEN r.REPORT_STATE = 'accept' THEN 2
                        WHEN r.REPORT_STATE = 'deny' THEN 3
                        ELSE 4
-                    END
+                    END,
+                    r.REPORT_DATE
                 """;
 
         try {
@@ -84,6 +85,8 @@ public class ReportDAO extends BaseDAO {
                 """;
 
         try {
+            log.warn("신고자 : {} 피신고자 : {} 신고사유 : {}",report.getReporterEmail(), report.getReportedEmail(), report.getReportContent());
+
             int row = jdbcTemplate.update(sql, report.getReporterEmail(), report.getReportedEmail(), report.getReportContent());
             return row > 0;
         } catch (Exception e) {
