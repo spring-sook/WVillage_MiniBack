@@ -48,6 +48,13 @@ public class ReviewController {
         }
     }
 
+    // 리뷰 태그 전체 반환
+    @GetMapping("/reviewList")
+    public ResponseEntity<List<ReviewVO>> getReviewList() {
+        List<ReviewVO> lst = reviewDAO.getAllReview();
+        return ResponseEntity.ok(lst);
+    }
+
     @GetMapping("/isReview")
     public ResponseEntity<Boolean> isReview(@RequestParam String email, @RequestParam String reserve) {
         boolean result = reviewDAO.isReview(email, reserve);

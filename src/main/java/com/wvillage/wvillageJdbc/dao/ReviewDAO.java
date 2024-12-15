@@ -26,9 +26,22 @@ public class ReviewDAO extends BaseDAO {
     @Transactional
     public boolean insertReview(String email, String reserve, String tags) {
         String reserveSql = "INSERT INTO REVIEW (REVIEW_EMAIL, REVIEW_RESERVE, REVIEW_TAG) VALUES (?, ?, ?)";
-        String recordSql = "UPDATE REVIEW_RECORD SET REC_COUNT = REC_COUNT + 1 WHERE REC_EMAIL = ? AND REC_REVIEW = ?";
+        String recordSql = """
+                UPDATE REVIEW_RECORD
+                SET REC_COUNT = REC_COUNT + 1
+                WHERE REC_EMAIL = (SELECT p.POST_EMAIL
+                                                 FROM POST p
+                                                 JOIN RESERVE r ON p.POST_ID = r.RES_POST
+                                                 WHERE r.RES_ID = ?) AND REC_REVIEW = ?""";
         String scoreSql = "SELECT SUM(TAG_SCORE) FROM REVIEW_TAG WHERE TAG_ID IN (%s)";
-        String updateScoreSql = "UPDATE MEMBER SET SCORE = SCORE + ? WHERE EMAIL = ?";
+        String updateScoreSql = """
+                UPDATE MEMBER m
+                SET SCORE = SCORE + ?
+                WHERE m.EMAIL = (SELECT p.POST_EMAIL
+                                 FROM POST p
+                                 JOIN RESERVE r ON p.POST_ID = r.RES_POST
+                                 WHERE r.RES_ID = ?)
+                """;
 
         String[] tagList = tags.split(",");
 
@@ -41,15 +54,19 @@ public class ReviewDAO extends BaseDAO {
         try {
             jdbcTemplate.update(reserveSql, email, reserve, tags);
 
+            log.error("태그 목록 : {}", Arrays.toString(tagList));
+
             for (String tag : tagList) {
-                jdbcTemplate.update(recordSql, email, tag.trim()); // 공백 제거 후 태그 사용
+                log.warn("{}리뷰{}", reserve, tag);
+                jdbcTemplate.update(recordSql, reserve, tag.trim()); // 공백 제거 후 태그 사용
             }
 
             log.warn("{} : {}", scoreSql, tagIds);
             int point = jdbcTemplate.queryForObject(String.format(scoreSql, tagIds), Integer.class);
             log.warn("포인트합계:{}", point);
 
-            jdbcTemplate.update(updateScoreSql, point, email);
+
+            jdbcTemplate.update(updateScoreSql, point, reserve);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -108,8 +125,6 @@ public class ReviewDAO extends BaseDAO {
     }
 
 
-
-
     // 해당 사용자의 이메일을 인자로 받아 VO의 리스트를 반환
     public List<ReviewVO> getReviewRecord(String email) {
         String sql = "SELECT RR.REC_EMAIL, RT.TAG_CONTENT, RR.REC_COUNT " +
@@ -131,6 +146,30 @@ public class ReviewDAO extends BaseDAO {
                     rs.getString("REC_EMAIL"),
                     rs.getString("TAG_CONTENT"),
                     rs.getInt("REC_COUNT")
+            );
+        }
+    }
+
+
+    public List<ReviewVO> getAllReview() {
+        String sql = "SELECT * FROM REVIEW";
+
+        try {
+            return jdbcTemplate.query(sql, new AllReviewMapper());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+    }
+
+    private static class AllReviewMapper implements RowMapper<ReviewVO> {
+
+        @Override
+        public ReviewVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new ReviewVO(
+                    rs.getString("TAG_ID"),
+                    rs.getString("TAG_CONTENT")
             );
         }
     }
