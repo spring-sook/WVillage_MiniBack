@@ -160,6 +160,28 @@ public class AuthDAO {
         }
     }
 
+    public boolean editProfileImg(String email, String imgUrl) {
+        String sql = "UPDATE MEMBER SET PROFILE_IMG = ? WHERE EMAIL = ? ";
+        try {
+            int result = jdbcTemplate.update(sql, imgUrl, email);
+            return result > 0;
+        } catch (Exception e) {
+            log.error("프로필 경로 수정 중 오류 : {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    public boolean signout(String email) {
+        String sql = "UPDATE MEMBER SET EXIST = 1 WHERE EMAIL = ? ";
+        try {
+            int result = jdbcTemplate.update(sql, email);
+            return result > 0;
+        } catch (DataAccessException e) {
+            log.error("회원탈퇴 중 오류 : {}", e);
+            return false;
+        }
+    }
+
 };
 
 

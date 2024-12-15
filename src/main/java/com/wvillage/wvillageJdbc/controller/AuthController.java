@@ -1,5 +1,6 @@
 package com.wvillage.wvillageJdbc.controller;
 
+import com.sun.tools.jconsole.JConsoleContext;
 import com.wvillage.wvillageJdbc.dao.AuthDAO;
 import com.wvillage.wvillageJdbc.vo.MemberVO;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,6 @@ public class AuthController {
             return ResponseEntity.status(400).body("회원가입 중 오류가 발생했습니다.");
         }
     }
-
 
     @GetMapping("/find-email")
     public ResponseEntity<String> findEmail(
@@ -130,5 +130,17 @@ public class AuthController {
             log.error("회원정보 수정 실패: {}", memberVo.getEmail());
             return ResponseEntity.status(500).body("회원정보 수정 중 오류가 발생했습니다.");
         }
+    }
+
+    @PostMapping("/editProfileImg")
+    public boolean editProfileImg(@RequestParam String email,
+                                 @RequestParam String imgUrl) {
+        return authDao.editProfileImg(email, imgUrl);
+    }
+
+    @PostMapping("/signout")
+    public boolean signout(@PathVariable String email) {
+        log.error(email);
+        return authDao.signout(email);
     }
 }
