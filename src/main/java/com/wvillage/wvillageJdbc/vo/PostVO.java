@@ -73,12 +73,13 @@ public class PostVO {
     }
 
     // myReserveListManagementMapper
-    public PostVO(String postId, String postTitle, String postRegion, String postLocation,String postThumbnail) {
+    public PostVO(String postId, String postTitle, String postRegion, String postLocation,String postThumbnail, int postPrice) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postLocation = postLocation;
         this.postRegion = postRegion;
         this.postThumbnail = postThumbnail;
+        this.postPrice = postPrice;
     }
 
     // UserPostlistRowMapper

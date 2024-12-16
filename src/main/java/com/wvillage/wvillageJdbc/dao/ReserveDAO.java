@@ -146,6 +146,7 @@ public class ReserveDAO extends BaseDAO {
                        POST_TITLE,
                        POST_REGION,
                        POST_LOCATION,
+                       POST_PRICE,
                        IMG_URL,
                        RES_ID,
                        RES_STATE,
@@ -157,7 +158,8 @@ public class ReserveDAO extends BaseDAO {
                 FROM (SELECT POST_ID,
                              POST_TITLE,
                              POST_REGION,
-                             POST_LOCATION
+                             POST_LOCATION,
+                             POST_PRICE
                       FROM POST
                       WHERE POST_ID IN (SELECT POST_ID
                                         FROM POST
@@ -205,7 +207,8 @@ public class ReserveDAO extends BaseDAO {
                             rs.getString("POST_TITLE"),
                             getRegionName(rs.getString("POST_REGION")),
                             rs.getString("POST_LOCATION"),
-                            rs.getString("IMG_URL")
+                            rs.getString("IMG_URL"),
+                            rs.getInt("POST_PRICE")
                     ),
                     new ReserveVO(
                             rs.getString("RES_ID"),
