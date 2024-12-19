@@ -292,18 +292,22 @@ public class ReserveDAO extends BaseDAO {
                 WHERE EMAIL = ?
                 """;
 
+        int totalPrice = vo.getReserveTotalPrice();
+        log.info("{}", totalPrice);
+
         try {
             int rows;
             if (!isApprove) {
                 rows = jdbcTemplate.update(cancelReserve, vo.getReserveState(), vo.getReserveReason(), vo.getReserveId());
-                rows += jdbcTemplate.update(updateOwner, vo.getReserveTotalPrice(), vo.getReservePost());
-                rows += jdbcTemplate.update(updateCustomer, -vo.getReserveTotalPrice(), vo.getReserveEmail());
+                rows += jdbcTemplate.update(updateOwner, totalPrice, vo.getReservePost());
+                rows += jdbcTemplate.update(updateCustomer, totalPrice, vo.getReserveEmail());
             } else {
                 log.error(vo.toString());
                 rows = jdbcTemplate.update(AcceptReserve, vo.getReserveState(), vo.getReserveId());
-                rows += jdbcTemplate.update(updateOwner, -vo.getReserveTotalPrice(), vo.getReservePost());
-                rows += jdbcTemplate.update(updateCustomer, vo.getReserveTotalPrice(), vo.getReserveEmail());
+                rows += jdbcTemplate.update(updateOwner, totalPrice, vo.getReservePost());
+                rows += jdbcTemplate.update(updateCustomer, totalPrice, vo.getReserveEmail());
             }
+
             return rows > 0;
         } catch (Exception e) {
             log.error(e.getMessage());
